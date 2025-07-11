@@ -15,9 +15,22 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        User::firstOrCreate([
+            'email' => 'admin@example.com',
+        ], [
+            'name' => 'Admin User',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
         ]);
+
+        User::firstOrCreate([
+            'email' => 'user@example.com',
+        ], [
+            'name' => 'Regular User',
+            'password' => bcrypt('password'),
+            'role' => 'user',
+        ]);
+
+        $this->call(DocumentTemplatesTableSeeder::class);
     }
 }

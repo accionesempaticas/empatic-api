@@ -5,11 +5,20 @@
     "description": "The skeleton application for the Laravel framework.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://www.setasign.com/downloads/"
+        }
+    ],
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "setasign/fpdf": "*",
+        "setasign/fpdi": "*",
+        "setasign/setapdf-signer": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
