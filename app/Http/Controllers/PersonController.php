@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Person;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class PersonController extends Controller
 {
@@ -21,7 +22,7 @@ class PersonController extends Controller
             'full_name' => 'nullable|string|max:100',
             'gender' => 'nullable|string|max:20',
             'phone_number' => 'nullable|string|max:15',
-            'email' => 'nullable|email|max:100',
+            'email' => 'nullable|email|max:100|unique:people',
             'date_of_birth' => 'nullable|date',
             'age' => 'nullable|integer',
             'nationality' => 'nullable|string|max:30',
@@ -30,7 +31,12 @@ class PersonController extends Controller
             'location_id' => 'nullable|exists:locations,id',
             'formation_id' => 'nullable|exists:academic_formations,id',
             'experience_id' => 'nullable|exists:experiences,id',
+            'password' => 'required|string|min:8',
+            'role' => 'required|string|in:admin,user',
         ]);
+
+        // Hashear la contraseña antes de crear la persona
+        $validated['password'] = Hash::make($validated['password']);
 
         $person = Person::create($validated);
 

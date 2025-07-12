@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Person; // Add this line
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -15,7 +16,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response()->json(User::all());
+        return response()->json(User::with('person')->get());
     }
 
     /**
@@ -24,20 +25,25 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'full_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|string|in:admin,user',
         ]);
 
+        $person = Person::create([
+            'full_name' => $request->full_name,
+            // Add other person fields if necessary, e.g., 'email' => $request->email
+        ]);
+
         $user = User::create([
-            'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'person_id' => $person->id,
         ]);
 
-        return response()->json($user, 201);
+        return response()->json($user->load('person'), 201);
     }
 
     /**
@@ -45,7 +51,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('person')->findOrFail($id);
         return response()->json($user);
     }
 
@@ -54,15 +60,27 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('person')->findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'full_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'role' => 'required|string|in:admin,user',
         ]);
 
-        $user->name = $request->name;
+        // Update Person data
+        if ($user->person) {
+            $user->person->full_name = $request->full_name;
+            $user->person->save();
+        } else {
+            // Handle case where a user might not have a person record (e.g., old data)
+            $person = Person::create([
+                'full_name' => $request->full_name,
+            ]);
+            $user->person_id = $person->id;
+        }
+
+        // Update User data
         $user->email = $request->email;
         $user->role = $request->role;
 
@@ -75,7 +93,7 @@ class UserController extends Controller
 
         $user->save();
 
-        return response()->json($user);
+        return response()->json($user->load('person'));
     }
 
     /**
@@ -83,7 +101,10 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('person')->findOrFail($id);
+        if ($user->person) {
+            $user->person->delete();
+        }
         $user->delete();
 
         return response()->json(null, 204);

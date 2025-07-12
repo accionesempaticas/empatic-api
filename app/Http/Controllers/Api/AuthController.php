@@ -22,14 +22,14 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $user = $request->user();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $person = $request->user();
+        $token = $person->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login exitoso',
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user,
+            'user' => $person,
         ]);
     }
 

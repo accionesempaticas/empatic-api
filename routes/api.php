@@ -5,7 +5,6 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\Api\DocumentSigningController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DocumentManagementController; // Add this line
-use App\Http\Controllers\Api\UserController; // Add this line
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -30,11 +29,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::post('/documents/upload-pdf', [DocumentManagementController::class, 'uploadPdf']);
         Route::post('/documents/create-template', [DocumentManagementController::class, 'createDocumentTemplate']);
-        //CRUD user
-        Route::get('/users', [UserController::class, 'index']);
-        Route::post('/users', [UserController::class, 'store']);
-        Route::get('/users/{id}', [UserController::class, 'show']);
-        Route::put('/users/{id}', [UserController::class, 'update']);
-        Route::delete('/users/{id}', [UserController::class, 'destroy']);
+        //CRUD person
+        Route::get('/people', [PersonController::class, 'index']);
+        Route::post('/people', [PersonController::class, 'store']);
+        Route::get('/people/{id}', [PersonController::class, 'show']);
+        Route::put('/people/{id}', [PersonController::class, 'update']);
+        Route::delete('/people/{id}', [PersonController::class, 'destroy']);
     });
 });
