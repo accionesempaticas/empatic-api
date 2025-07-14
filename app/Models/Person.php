@@ -2,17 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Person extends Model
+class Person extends Authenticatable
 {
+    use HasApiTokens, Notifiable, HasFactory;
     protected $table = 'people';
 
     protected $fillable = [
-        'first_name', 'last_name', 'full_name', 'gender',
+        'document_type', 'document_number', 'first_name', 'last_name', 'full_name', 'gender',
         'phone_number', 'email', 'date_of_birth', 'age',
         'nationality', 'family_phone_number', 'linkedin',
-        'location_id', 'formation_id', 'experience_id'
+        'location_id', 'formation_id', 'experience_id',
+        'password', 'role', 'status', 'reject_reason'
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     public function location()
@@ -33,5 +43,10 @@ class Person extends Model
     public function participants()
     {
         return $this->hasMany(Participant::class);
+    }
+
+    public function program()
+    {
+        return $this->belongsTo(Program::class);
     }
 }

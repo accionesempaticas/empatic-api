@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('people', function (Blueprint $table) {
             $table->id();
-            $table->string('dni', 8)->unique()->nullable();
+            $table->string('document_type', 10)->nullable();
+            $table->string('document_number', 20)->nullable();
+            $table->unique(['document_type', 'document_number']);
             $table->string('first_name', 50)->nullable();
             $table->string('last_name', 50)->nullable();
             $table->string('full_name', 100)->nullable();

@@ -7,20 +7,17 @@ use Illuminate\Http\Request;
 
 class ProgramController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:admin');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return Program::all();
     }
 
     /**
@@ -28,7 +25,14 @@ class ProgramController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $program = Program::create($validated);
+
+        return response()->json($program, 201);
     }
 
     /**
@@ -36,15 +40,7 @@ class ProgramController extends Controller
      */
     public function show(Program $program)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Program $program)
-    {
-        //
+        return $program;
     }
 
     /**
@@ -52,7 +48,14 @@ class ProgramController extends Controller
      */
     public function update(Request $request, Program $program)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $program->update($validated);
+
+        return response()->json($program);
     }
 
     /**
@@ -60,6 +63,8 @@ class ProgramController extends Controller
      */
     public function destroy(Program $program)
     {
-        //
+        $program->delete();
+
+        return response()->json(['message' => 'Program deleted successfully']);
     }
 }
