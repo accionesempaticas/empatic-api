@@ -14,8 +14,6 @@ class PersonSeeder extends Seeder
     public function run(): void
     {
         Person::factory()->create([
-            'first_name' => 'Admin',
-            'last_name' => 'User',
             'email' => 'admin@example.com',
             'password' => bcrypt('password'),
             'role' => 'admin',

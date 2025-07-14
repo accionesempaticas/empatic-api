@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\PersonController;
-use App\Http\Controllers\Api\DocumentSigningController;
+use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DocumentManagementController; // Add this line
 use Illuminate\Support\Facades\Route;
@@ -11,29 +11,42 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/people/{id}', [PersonController::class, 'show']);
 
-
+Route::post('/postulant', [PersonController::class, 'registered']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
 
-    // Rutas para usuarios (user y admin)
-    Route::middleware('role:user,admin')->group(function () {
-        Route::get('/documents/pending', [DocumentSigningController::class, 'getPendingDocuments']);
-        Route::get('/documents/signed', [DocumentSigningController::class, 'getSignedDocuments']);
-        Route::post('/documents/sign/{template}', [DocumentSigningController::class, 'signDocument']);
-        Route::get('/documents/{template}/view', [DocumentSigningController::class, 'serveDocument']);
+    // Rutas para usuarios (user)
+    Route::middleware('role:user')->group(function () {
+        Route::post('/postulant/docsPending/{id}', [PersonController::class, 'docsPending']);
     });
 
     // Rutas para administradores (admin)
     Route::middleware('role:admin')->group(function () {
-        Route::post('/documents/upload-pdf', [DocumentManagementController::class, 'uploadPdf']);
-        Route::post('/documents/create-template', [DocumentManagementController::class, 'createDocumentTemplate']);
+
         //CRUD person
-        Route::get('/people', [PersonController::class, 'index']);
         Route::post('/people', [PersonController::class, 'store']);
+        Route::get('/people', [PersonController::class, 'index']);
         Route::get('/people/{id}', [PersonController::class, 'show']);
         Route::put('/people/{id}', [PersonController::class, 'update']);
         Route::delete('/people/{id}', [PersonController::class, 'destroy']);
+
+        //CRUD postulant
+        Route::post('/postulant/interviewing/{id}', [PersonController::class, 'interviewing']);
+        Route::post('/postulant/generatePassword/{id}', [PersonController::class, 'generatePassword']);
+        Route::post('/postulant/accepted/{id}', [PersonController::class, 'accepted']);
+        Route::post('/postulant/reject/{id}', [PersonController::class, 'reject']);
+
+
+        // CRUD Programs
+        Route::get('/programs', [ProgramController::class, 'index']);
+        Route::post('/programs', [ProgramController::class, 'store']);
+        Route::get('/programs/{program}', [ProgramController::class, 'show']);
+        Route::put('/programs/{program}', [ProgramController::class, 'update']);
+        Route::delete('/programs/{program}', [ProgramController::class, 'destroy']);
+
+        // Download file
+        Route::get('/documents/download', [DocumentManagementController::class, 'downloadFile']);
     });
 });

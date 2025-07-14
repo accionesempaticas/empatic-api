@@ -17,7 +17,8 @@ class PersonFactory extends Factory
     public function definition(): array
     {
         return [
-            'dni' => $this->faker->numerify('########'),
+            'document_type' => $this->faker->randomElement(['DNI', 'CE']),
+            'document_number' => $this->faker->numerify('########'),
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'full_name' => $this->faker->name,

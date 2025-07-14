@@ -13,11 +13,11 @@ class Person extends Authenticatable
     protected $table = 'people';
 
     protected $fillable = [
-        'dni', 'first_name', 'last_name', 'full_name', 'gender',
+        'document_type', 'document_number', 'first_name', 'last_name', 'full_name', 'gender',
         'phone_number', 'email', 'date_of_birth', 'age',
         'nationality', 'family_phone_number', 'linkedin',
         'location_id', 'formation_id', 'experience_id',
-        'password', 'role'
+        'password', 'role', 'status', 'reject_reason'
     ];
 
     protected $hidden = [
@@ -45,5 +45,8 @@ class Person extends Authenticatable
         return $this->hasMany(Participant::class);
     }
 
-
+    public function program()
+    {
+        return $this->belongsTo(Program::class);
+    }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('signed_documents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('person_id')->constrained('people')->onDelete('cascade');
             $table->foreignId('document_template_id')->constrained()->onDelete('cascade');
             $table->timestamp('signed_at');
             $table->string('signature_data'); // To store the signer's name
