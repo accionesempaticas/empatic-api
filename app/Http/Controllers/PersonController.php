@@ -13,9 +13,62 @@ use Illuminate\Support\Str;
 
 class PersonController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Person::with('formation', 'location', 'experience')->get();
+        $query = Person::with('formation', 'location', 'experience');
+
+        // Filtering
+        if ($request->has('document_type')) {
+            $query->where('document_type', $request->input('document_type'));
+        }
+
+        if ($request->has('document_number')) {
+            $query->where('document_number', $request->input('document_number'));
+        }
+
+        if ($request->has('first_name')) {
+            $query->where('first_name', 'like', '%' . $request->input('first_name') . '%');
+        }
+
+        if ($request->has('last_name')) {
+            $query->where('last_name', 'like', '%' . $request->input('last_name') . '%');
+        }
+
+        if ($request->has('email')) {
+            $query->where('email', 'like', '%' . $request->input('email') . '%');
+        }
+
+        if ($request->has('gender')) {
+            $query->where('gender', $request->input('gender'));
+        }
+
+        if ($request->has('nationality')) {
+            $query->where('nationality', 'like', '%' . $request->input('nationality') . '%');
+        }
+
+        if ($request->has('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        // Age range filtering
+        if ($request->has('min_age')) {
+            $query->where('age', '>=', $request->input('min_age'));
+        }
+
+        if ($request->has('max_age')) {
+            $query->where('age', '<=', $request->input('max_age'));
+        }
+
+        // Ordering
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'desc');
+
+        $query->orderBy($sortBy, $sortOrder);
+
+        // Pagination
+        $perPage = $request->input('per_page', 10);
+
+        return $query->paginate($perPage);
     }
 
     public function store(Request $request)
