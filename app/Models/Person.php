@@ -17,6 +17,7 @@ class Person extends Authenticatable
         'phone_number', 'email', 'date_of_birth', 'age',
         'nationality', 'family_phone_number', 'linkedin',
         'location_id', 'formation_id', 'experience_id',
+        'cv_path', // <-- se agrega esto
         'password', 'role', 'status', 'reject_reason'
     ];
 

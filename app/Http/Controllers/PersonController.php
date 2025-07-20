@@ -172,7 +172,8 @@ class PersonController extends Controller
             'age' => 'nullable|integer',
             'family_phone_number' => 'nullable|string|max:15',
             'linkedin' => 'nullable|string|max:70',
-            'cv_file' => 'required|mimes:pdf|max:10240',
+            'cv_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
+
         ]);
 
         //Save formation
