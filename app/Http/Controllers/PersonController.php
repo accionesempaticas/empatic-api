@@ -62,6 +62,29 @@ class PersonController extends Controller
         return $query->paginate($perPage);
     }
 
+    /**
+     * Calcula la edad basada en la fecha de nacimiento
+     */
+    private function calculateAge($dateOfBirth)
+    {
+        if (!$dateOfBirth) {
+            return null;
+        }
+        
+        return \Carbon\Carbon::parse($dateOfBirth)->age;
+    }
+
+    /**
+     * Genera el nombre completo basado en nombre y apellido
+     */
+    private function generateFullName($firstName, $lastName)
+    {
+        if ($firstName && $lastName) {
+            return trim($firstName . ' ' . $lastName);
+        }
+        return null;
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -72,7 +95,7 @@ class PersonController extends Controller
             'gender' => 'nullable|string|max:20',
             'phone_number' => 'nullable|string|max:15',
             'email' => 'nullable|email|max:100',
-            'date_of_birth' => 'nullable|date',
+            'date_of_birth' => 'nullable|date|before:today',
             'age' => 'nullable|integer|min:0|max:150',
             'nationality' => 'nullable|string|max:30',
             'family_phone_number' => 'nullable|string|max:15',
@@ -82,15 +105,16 @@ class PersonController extends Controller
             'experience_id' => 'nullable|exists:experiences,id',
         ]);
 
-        // Si se proporciona date_of_birth, calcular la edad
+        // Calcular edad automáticamente si se proporciona fecha de nacimiento
         if (isset($validated['date_of_birth'])) {
-            $validated['age'] = \Carbon\Carbon::parse($validated['date_of_birth'])->age;
+            $validated['age'] = $this->calculateAge($validated['date_of_birth']);
         }
 
-        // Si se proporcionan nombre y apellido, generar nombre completo
-        if (isset($validated['first_name']) && isset($validated['last_name'])) {
-            $validated['full_name'] = $validated['first_name'] . ' ' . $validated['last_name'];
-        }
+        // Generar nombre completo automáticamente
+        $validated['full_name'] = $this->generateFullName(
+            $validated['first_name'] ?? null, 
+            $validated['last_name'] ?? null
+        );
 
         try {
             DB::beginTransaction();
@@ -142,7 +166,7 @@ class PersonController extends Controller
                 'gender' => 'nullable|string|max:20',
                 'phone_number' => 'nullable|string|max:15',
                 'email' => 'nullable|email|max:100',
-                'date_of_birth' => 'nullable|date',
+                'date_of_birth' => 'nullable|date|before:today',
                 'age' => 'nullable|integer|min:0|max:150',
                 'nationality' => 'nullable|string|max:30',
                 'family_phone_number' => 'nullable|string|max:15',
@@ -152,14 +176,16 @@ class PersonController extends Controller
                 'experience_id' => 'nullable|exists:experiences,id',
             ]);
 
-            // Si se proporciona date_of_birth, calcular la edad
+            // Calcular edad automáticamente si se proporciona fecha de nacimiento
             if (isset($validated['date_of_birth'])) {
-                $validated['age'] = \Carbon\Carbon::parse($validated['date_of_birth'])->age;
+                $validated['age'] = $this->calculateAge($validated['date_of_birth']);
             }
 
-            // Si se proporcionan nombre y apellido, generar nombre completo
-            if (isset($validated['first_name']) && isset($validated['last_name'])) {
-                $validated['full_name'] = $validated['first_name'] . ' ' . $validated['last_name'];
+            // Generar nombre completo automáticamente si se actualizan nombre o apellido
+            if (isset($validated['first_name']) || isset($validated['last_name'])) {
+                $firstName = $validated['first_name'] ?? $person->first_name;
+                $lastName = $validated['last_name'] ?? $person->last_name;
+                $validated['full_name'] = $this->generateFullName($firstName, $lastName);
             }
 
             DB::beginTransaction();
