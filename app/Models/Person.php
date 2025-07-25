@@ -9,7 +9,7 @@ class Person extends Model
     protected $table = 'people';
 
     protected $fillable = [
-        'first_name', 'last_name', 'full_name', 'gender',
+        'dni', 'first_name', 'last_name', 'full_name', 'gender',
         'phone_number', 'email', 'date_of_birth', 'age',
         'nationality', 'family_phone_number', 'linkedin',
         'location_id', 'formation_id', 'experience_id'
