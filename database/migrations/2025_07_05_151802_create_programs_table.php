@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('group_name', 50)->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
+            $table->string('status', 20)->default('active'); //Agregado
             $table->timestamps();
         });
     }

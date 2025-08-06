@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\Api\AuthController;
@@ -45,6 +46,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/programs/{program}', [ProgramController::class, 'show']);
         Route::put('/programs/{program}', [ProgramController::class, 'update']);
         Route::delete('/programs/{program}', [ProgramController::class, 'destroy']);
+
+        // Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index']);
 
         // Download file
         Route::get('/documents/download', [DocumentManagementController::class, 'downloadFile']);

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f483529a090758f7f19b9a0eb78ca040",
+    "content-hash": "a40af3d7e61934cda47337cefc5f380c",
     "packages": [
         {
             "name": "brick/math",
@@ -3651,67 +3651,6 @@
                 }
             ],
             "time": "2025-02-05T13:22:35+00:00"
-        },
-        {
-            "name": "setasign/setapdf-core",
-            "version": "2.48.0.2155",
-            "dist": {
-                "type": "zip",
-                "url": "https://www.setasign.com/downloads/6978331/SetaPDF-Core_2.48.0.2155-without-demos.zip"
-            },
-            "require": {
-                "php": ">=7.1 <=8.4.99999"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "SetaPDF_": "library/"
-                },
-                "psr-4": {
-                    "setasign\\SetaPDF2\\": "library/SetaPDF"
-                },
-                "files": [
-                    "library/SetaPDF/Autoload.php"
-                ]
-            },
-            "license": [
-                "proprietary"
-            ],
-            "support": {
-                "email": "support@setasign.com"
-            },
-            "time": "2025-06-19T00:00:00+00:00"
-        },
-        {
-            "name": "setasign/setapdf-signer",
-            "version": "2.48.0.2155",
-            "dist": {
-                "type": "zip",
-                "url": "https://www.setasign.com/downloads/6978334/SetaPDF-Signer_2.48.0.2155-without-core.zip"
-            },
-            "require": {
-                "php": ">=7.1 <=8.4.99999",
-                "setasign/setapdf-core": "2.48.0.2155"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "SetaPDF_": "library/"
-                },
-                "psr-4": {
-                    "setasign\\SetaPDF2\\": "library/SetaPDF"
-                },
-                "files": [
-                    "library/SetaPDF/Autoload.php"
-                ]
-            },
-            "license": [
-                "proprietary"
-            ],
-            "support": {
-                "email": "support@setasign.com"
-            },
-            "time": "2025-06-19T00:00:00+00:00"
         },
         {
             "name": "symfony/clock",

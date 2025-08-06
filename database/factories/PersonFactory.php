@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+//use App\Models\Person;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,7 +23,7 @@ class PersonFactory extends Factory
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'full_name' => $this->faker->name,
-            'gender' => $this->faker->randomElement(['male', 'female']),
+            'gender' => $this->faker->randomElement(['Male', 'Female']),
             'phone_number' => $this->faker->numerify('#########'),
             'email' => $this->faker->unique()->safeEmail,
             'date_of_birth' => $this->faker->date(),
@@ -30,9 +31,10 @@ class PersonFactory extends Factory
             'nationality' => $this->faker->country,
             'family_phone_number' => $this->faker->numerify('#########'),
             'linkedin' => 'https://www.linkedin.com/in/' . $this->faker->userName,
-            'password' => bcrypt('password'), // password
+            'password' => bcrypt('password'),
             'role' => 'user',
             'remember_token' => \Illuminate\Support\Str::random(10),
+
         ];
     }
 }
