@@ -403,4 +403,40 @@ class PersonController extends Controller
 
         return response()->json($person);
     }
+
+    public function createAdmin(Request $request)
+    {
+        // Verificar si ya existe un admin
+        $existingAdmin = Person::where('role', 'admin')->first();
+        if ($existingAdmin) {
+            return response()->json([
+                'message' => 'Ya existe un usuario administrador',
+                'admin_email' => $existingAdmin->email
+            ], 409);
+        }
+
+        // Crear nuevo usuario admin
+        $admin = Person::create([
+            'document_type' => 'DNI',
+            'document_number' => '99999999',
+            'first_name' => 'Admin',
+            'last_name' => 'Sistema',
+            'full_name' => 'Admin Sistema',
+            'email' => $request->email ?? 'admin@test.com',
+            'password' => Hash::make($request->password ?? 'admin123'),
+            'role' => 'admin',
+            'gender' => 'Otro',
+            'phone_number' => '999999999',
+            'age' => 30,
+            'nationality' => 'Peruana',
+            'status' => PostulantStatus::ACCEPTED,
+            'user_status' => 'ACTIVO'
+        ]);
+
+        return response()->json([
+            'message' => 'Usuario administrador creado exitosamente',
+            'email' => $admin->email,
+            'password' => $request->password ?? 'admin123'
+        ], 201);
+    }
 }

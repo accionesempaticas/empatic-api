@@ -9,6 +9,7 @@ use App\Http\Controllers\DocumentController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/create-admin', [PersonController::class, 'createAdmin']);
 
 Route::get('/people/{id}', [PersonController::class, 'show']);
 
