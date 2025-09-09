@@ -48,3 +48,30 @@ Route::get('/db-status', function () {
         ], 500);
     }
 });
+
+// Endpoint temporal para ejecutar seeders manualmente
+Route::get('/run-seeders', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        
+        $peopleCount = \App\Models\Person::count();
+        $locationsCount = \App\Models\Location::count();
+        $formationsCount = \App\Models\AcademicFormation::count();
+        $experiencesCount = \App\Models\Experience::count();
+        
+        return response()->json([
+            'message' => 'Seeders ejecutados exitosamente',
+            'counts' => [
+                'people' => $peopleCount,
+                'locations' => $locationsCount,
+                'formations' => $formationsCount,
+                'experiences' => $experiencesCount
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Error al ejecutar seeders',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
