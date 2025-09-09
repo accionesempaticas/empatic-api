@@ -14,6 +14,7 @@ php artisan migrate --force
 # Run seeders (ignore if already exists)
 echo "🌱 Running seeders..."
 php artisan db:seed --class=AdminUserSeeder --force || true
+php artisan db:seed --class=TestUsersSeeder --force || true
 
 # Start the server
 echo "🌐 Starting web server..."
