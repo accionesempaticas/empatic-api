@@ -182,37 +182,7 @@ class PersonController extends Controller
         \Log::info('POST /postulant - Campo area existe:', ['exists' => $request->has('area'), 'value' => $request->get('area')]);
         \Log::info('POST /postulant - Campo group existe:', ['exists' => $request->has('group'), 'value' => $request->get('group')]);
         
-        // Construir objetos anidados a partir de campos con notación de punto
-        $formationData = [
-            'academic_degree' => $request->input('formation.academic_degree'),
-            'career' => $request->input('formation.career'), 
-            'formation_center' => $request->input('formation.formation_center')
-        ];
-        
-        $locationData = [
-            'country' => $request->input('location.country'),
-            'region' => $request->input('location.region'),
-            'province' => $request->input('location.province'),
-            'district' => $request->input('location.district'),
-            'address' => $request->input('location.address')
-        ];
-        
-        $experienceData = [
-            'experience_time' => $request->input('experience.experience_time'),
-            'other_volunteer_work' => $request->input('experience.other_volunteer_work')
-        ];
-        
-        // Agregar los objetos anidados al request para la validación
-        $request->merge([
-            'formation' => $formationData,
-            'location' => $locationData,
-            'experience' => $experienceData
-        ]);
-        
-        \Log::info('POST /postulant - Formation data:', ['data' => $formationData]);
-        \Log::info('POST /postulant - Location data:', ['data' => $locationData]);
-        \Log::info('POST /postulant - Experience data:', ['data' => $experienceData]);
-        
+        // Validar directamente los campos tal como llegan del frontend
         try {
             $request->validate([
             'formation.academic_degree' => 'required|string|max:50',
@@ -264,14 +234,39 @@ class PersonController extends Controller
             ], 422);
         }
 
-        //Save formation
-        $formation = AcademicFormation::create($request->input('formation'));
-        //Save location
-        $location = Location::create($request->input('location'));
-        //Save experience
-        $experience = Experience::create($request->input('experience'));
+        // Construir objetos para la base de datos después de la validación exitosa
+        $formationData = [
+            'academic_degree' => $request->input('formation.academic_degree'),
+            'career' => $request->input('formation.career'), 
+            'formation_center' => $request->input('formation.formation_center')
+        ];
+        
+        $locationData = [
+            'country' => $request->input('location.country'),
+            'region' => $request->input('location.region'),
+            'province' => $request->input('location.province'),
+            'district' => $request->input('location.district'),
+            'address' => $request->input('location.address')
+        ];
+        
+        $experienceData = [
+            'experience_time' => $request->input('experience.experience_time'),
+            'other_volunteer_work' => $request->input('experience.other_volunteer_work')
+        ];
 
-        $personData = $request->except(['formation', 'location', 'experience', 'cv_file', 'pi_file', 'pf_file']);
+        //Save formation
+        $formation = AcademicFormation::create($formationData);
+        //Save location
+        $location = Location::create($locationData);
+        //Save experience
+        $experience = Experience::create($experienceData);
+
+        $personData = $request->except([
+            'formation.academic_degree', 'formation.career', 'formation.formation_center',
+            'location.country', 'location.region', 'location.province', 'location.district', 'location.address',
+            'experience.experience_time', 'experience.other_volunteer_work',
+            'cv_file', 'pi_file', 'pf_file', 'dni_file', 'cul_file'
+        ]);
 
         // Calculate age from date_of_birth
         if ($personData['date_of_birth']) {
