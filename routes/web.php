@@ -27,10 +27,7 @@ Route::get('/storage/privates/{userId}/{filename}', function ($userId, $filename
 // Endpoint especial para inicializar la base de datos en producción
 Route::get('/init-db', function () {
     try {
-        // Ejecutar migraciones
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        
-        // Ejecutar seeders
+        // Solo ejecutar seeders sin migraciones
         \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\Seeders\PersonSeeder', '--force' => true]);
         \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\Seeders\DocumentTemplatesTableSeeder', '--force' => true]);
         \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\Seeders\AdminUserSeeder', '--force' => true]);
@@ -43,7 +40,7 @@ Route::get('/init-db', function () {
         $experiencesCount = \App\Models\Experience::count();
         
         return response()->json([
-            'message' => 'Base de datos inicializada exitosamente',
+            'message' => 'Seeders ejecutados exitosamente',
             'counts' => [
                 'people' => $peopleCount,
                 'locations' => $locationsCount,
@@ -53,7 +50,7 @@ Route::get('/init-db', function () {
         ]);
     } catch (\Exception $e) {
         return response()->json([
-            'error' => 'Error al inicializar base de datos',
+            'error' => 'Error al ejecutar seeders',
             'message' => $e->getMessage()
         ], 500);
     }
