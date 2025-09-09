@@ -308,3 +308,36 @@ Route::get('/populate-basic', function () {
         ], 500);
     }
 });
+
+// Endpoint para agregar columna user_status manualmente
+Route::get('/fix-user-status', function () {
+    try {
+        // Verificar si la columna ya existe
+        $hasColumn = \Illuminate\Support\Facades\Schema::hasColumn('people', 'user_status');
+        
+        if ($hasColumn) {
+            return response()->json([
+                'message' => 'Columna user_status ya existe',
+                'status' => 'ok'
+            ]);
+        }
+        
+        // Agregar la columna user_status
+        \Illuminate\Support\Facades\Schema::table('people', function (\Illuminate\Database\Schema\Blueprint $table) {
+            $table->enum('user_status', ['ACTIVO', 'INACTIVO', 'PENDIENTE', 'RETIRADO', 'BL'])
+                  ->default('PENDIENTE')
+                  ->after('role');
+        });
+        
+        return response()->json([
+            'message' => 'Columna user_status agregada exitosamente',
+            'status' => 'fixed'
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Error al agregar columna user_status',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
