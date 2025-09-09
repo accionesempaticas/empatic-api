@@ -52,39 +52,39 @@ Route::get('/db-status', function () {
 // Endpoint para poblar la base de datos manualmente
 Route::get('/populate-db', function () {
     try {
-        // Crear locations
+        // Crear locations (usar la estructura real: region, province, address)
         $locations = [
-            ['name' => 'Bogotá', 'department' => 'Cundinamarca', 'country' => 'Colombia'],
-            ['name' => 'Medellín', 'department' => 'Antioquia', 'country' => 'Colombia'],
-            ['name' => 'Cali', 'department' => 'Valle del Cauca', 'country' => 'Colombia'],
-            ['name' => 'Barranquilla', 'department' => 'Atlántico', 'country' => 'Colombia'],
-            ['name' => 'Cartagena', 'department' => 'Bolívar', 'country' => 'Colombia'],
+            ['region' => 'Cundinamarca', 'province' => 'Bogotá', 'address' => 'Calle 26 #68-10, Bogotá'],
+            ['region' => 'Antioquia', 'province' => 'Medellín', 'address' => 'Carrera 43 #19-125, Medellín'],
+            ['region' => 'Valle del Cauca', 'province' => 'Cali', 'address' => 'Avenida 6N #23-45, Cali'],
+            ['region' => 'Atlántico', 'province' => 'Barranquilla', 'address' => 'Carrera 53 #75-185, Barranquilla'],
+            ['region' => 'Bolívar', 'province' => 'Cartagena', 'address' => 'Centro Histórico, Cartagena'],
         ];
         
         foreach ($locations as $location) {
             \App\Models\Location::firstOrCreate($location);
         }
         
-        // Crear formaciones académicas
+        // Crear formaciones académicas (usar la estructura real: academic_degree, career, formation_center)
         $formations = [
-            ['name' => 'Ingeniería de Sistemas', 'level' => 'Pregrado', 'institution' => 'Universidad Nacional'],
-            ['name' => 'Administración de Empresas', 'level' => 'Pregrado', 'institution' => 'Universidad de los Andes'],
-            ['name' => 'Psicología', 'level' => 'Pregrado', 'institution' => 'Universidad Javeriana'],
-            ['name' => 'Derecho', 'level' => 'Pregrado', 'institution' => 'Universidad Externado'],
-            ['name' => 'Medicina', 'level' => 'Pregrado', 'institution' => 'Universidad del Rosario'],
+            ['academic_degree' => 'Pregrado', 'career' => 'Ingeniería de Sistemas', 'formation_center' => 'Universidad Nacional'],
+            ['academic_degree' => 'Pregrado', 'career' => 'Administración de Empresas', 'formation_center' => 'Universidad de los Andes'],
+            ['academic_degree' => 'Pregrado', 'career' => 'Psicología', 'formation_center' => 'Universidad Javeriana'],
+            ['academic_degree' => 'Pregrado', 'career' => 'Derecho', 'formation_center' => 'Universidad Externado'],
+            ['academic_degree' => 'Pregrado', 'career' => 'Medicina', 'formation_center' => 'Universidad del Rosario'],
         ];
         
         foreach ($formations as $formation) {
             \App\Models\AcademicFormation::firstOrCreate($formation);
         }
         
-        // Crear experiencias
+        // Crear experiencias (usar la estructura real: experience_time, other_volunteer_work)
         $experiences = [
-            ['company' => 'Google Colombia', 'position' => 'Software Developer', 'years' => 3],
-            ['company' => 'Microsoft', 'position' => 'Product Manager', 'years' => 2],
-            ['company' => 'Amazon', 'position' => 'Data Analyst', 'years' => 4],
-            ['company' => 'Meta', 'position' => 'UX Designer', 'years' => 1],
-            ['company' => 'Rappi', 'position' => 'Marketing Specialist', 'years' => 2],
+            ['experience_time' => '2-3 años', 'other_volunteer_work' => 1],
+            ['experience_time' => '1-2 años', 'other_volunteer_work' => 1],
+            ['experience_time' => '3-5 años', 'other_volunteer_work' => 0],
+            ['experience_time' => 'Menos de 1 año', 'other_volunteer_work' => 1],
+            ['experience_time' => 'Más de 5 años', 'other_volunteer_work' => 0],
         ];
         
         foreach ($experiences as $experience) {
