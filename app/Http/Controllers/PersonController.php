@@ -179,22 +179,22 @@ class PersonController extends Controller
         
         // Construir objetos anidados a partir de campos con notación de punto
         $formationData = [
-            'academic_degree' => $request->get('formation.academic_degree'),
-            'career' => $request->get('formation.career'), 
-            'formation_center' => $request->get('formation.formation_center')
+            'academic_degree' => $request->input('formation.academic_degree'),
+            'career' => $request->input('formation.career'), 
+            'formation_center' => $request->input('formation.formation_center')
         ];
         
         $locationData = [
-            'country' => $request->get('location.country'),
-            'region' => $request->get('location.region'),
-            'province' => $request->get('location.province'),
-            'district' => $request->get('location.district'),
-            'address' => $request->get('location.address')
+            'country' => $request->input('location.country'),
+            'region' => $request->input('location.region'),
+            'province' => $request->input('location.province'),
+            'district' => $request->input('location.district'),
+            'address' => $request->input('location.address')
         ];
         
         $experienceData = [
-            'experience_time' => $request->get('experience.experience_time'),
-            'other_volunteer_work' => $request->get('experience.other_volunteer_work')
+            'experience_time' => $request->input('experience.experience_time'),
+            'other_volunteer_work' => $request->input('experience.other_volunteer_work')
         ];
         
         // Agregar los objetos anidados al request para la validación
