@@ -24,23 +24,16 @@ Route::get('/storage/privates/{userId}/{filename}', function ($userId, $filename
         ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 })->name('private.files');
 
-// Endpoint especial para inicializar la base de datos en producción
-Route::get('/init-db', function () {
+// Endpoint para verificar estado de la base de datos
+Route::get('/db-status', function () {
     try {
-        // Solo ejecutar seeders sin migraciones
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\Seeders\PersonSeeder', '--force' => true]);
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\Seeders\DocumentTemplatesTableSeeder', '--force' => true]);
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\Seeders\AdminUserSeeder', '--force' => true]);
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\Seeders\TestUsersSeeder', '--force' => true]);
-        
-        // Contar registros
         $peopleCount = \App\Models\Person::count();
         $locationsCount = \App\Models\Location::count();
         $formationsCount = \App\Models\AcademicFormation::count();
         $experiencesCount = \App\Models\Experience::count();
         
         return response()->json([
-            'message' => 'Seeders ejecutados exitosamente',
+            'message' => 'Base de datos funcionando',
             'counts' => [
                 'people' => $peopleCount,
                 'locations' => $locationsCount,
@@ -50,7 +43,7 @@ Route::get('/init-db', function () {
         ]);
     } catch (\Exception $e) {
         return response()->json([
-            'error' => 'Error al ejecutar seeders',
+            'error' => 'Error al verificar base de datos',
             'message' => $e->getMessage()
         ], 500);
     }

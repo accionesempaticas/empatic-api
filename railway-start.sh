@@ -5,16 +5,16 @@ echo "🚀 Starting Railway deployment with SQLite..."
 
 # Create SQLite database file if it doesn't exist
 echo "📁 Ensuring SQLite database exists..."
+rm -f database/database.sqlite
 touch database/database.sqlite
 
-# Run migrations
-echo "📋 Running migrations..."
-php artisan migrate --force
+# Fresh migrations (drop all tables and recreate)
+echo "📋 Running fresh migrations..."
+php artisan migrate:fresh --force
 
-# Run seeders (ignore if already exists)
-echo "🌱 Running seeders..."
-php artisan db:seed --class=AdminUserSeeder --force || true
-php artisan db:seed --class=TestUsersSeeder --force || true
+# Run all seeders
+echo "🌱 Running all seeders..."
+php artisan db:seed --force
 
 # Start the server
 echo "🌐 Starting web server..."
