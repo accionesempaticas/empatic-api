@@ -174,9 +174,9 @@ class PersonController extends Controller
         \Log::info('POST /postulant - Archivos recibidos:', array_keys($request->allFiles()));
         
         // Log específico de campos con notación de puntos
-        \Log::info('POST /postulant - Campo formation.academic_degree:', $request->input('formation.academic_degree'));
-        \Log::info('POST /postulant - Campo location.country:', $request->input('location.country'));
-        \Log::info('POST /postulant - Campo experience.experience_time:', $request->input('experience.experience_time'));
+        \Log::info('POST /postulant - Campo formation.academic_degree:', ['value' => $request->input('formation.academic_degree')]);
+        \Log::info('POST /postulant - Campo location.country:', ['value' => $request->input('location.country')]);
+        \Log::info('POST /postulant - Campo experience.experience_time:', ['value' => $request->input('experience.experience_time')]);
         
         // Verificar si existen los campos específicos
         \Log::info('POST /postulant - Campo area existe:', ['exists' => $request->has('area'), 'value' => $request->get('area')]);
