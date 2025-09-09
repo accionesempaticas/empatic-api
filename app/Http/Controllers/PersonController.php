@@ -177,24 +177,24 @@ class PersonController extends Controller
         \Log::info('POST /postulant - Campo area existe:', ['exists' => $request->has('area'), 'value' => $request->get('area')]);
         \Log::info('POST /postulant - Campo group existe:', ['exists' => $request->has('group'), 'value' => $request->get('group')]);
         
-        // Construir objetos anidados a partir de campos planos
+        // Construir objetos anidados a partir de campos con notación de punto
         $formationData = [
-            'academic_degree' => $request->get('formation_academic_degree'),
-            'career' => $request->get('formation_career'), 
-            'formation_center' => $request->get('formation_formation_center')
+            'academic_degree' => $request->get('formation.academic_degree'),
+            'career' => $request->get('formation.career'), 
+            'formation_center' => $request->get('formation.formation_center')
         ];
         
         $locationData = [
-            'country' => $request->get('location_country'),
-            'region' => $request->get('location_region'),
-            'province' => $request->get('location_province'),
-            'district' => $request->get('location_district'),
-            'address' => $request->get('location_address')
+            'country' => $request->get('location.country'),
+            'region' => $request->get('location.region'),
+            'province' => $request->get('location.province'),
+            'district' => $request->get('location.district'),
+            'address' => $request->get('location.address')
         ];
         
         $experienceData = [
-            'experience_time' => $request->get('experience_experience_time'),
-            'other_volunteer_work' => $request->get('experience_other_volunteer_work')
+            'experience_time' => $request->get('experience.experience_time'),
+            'other_volunteer_work' => $request->get('experience.other_volunteer_work')
         ];
         
         // Agregar los objetos anidados al request para la validación
