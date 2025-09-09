@@ -12,7 +12,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/people/{id}', [PersonController::class, 'show']);
 
-Route::post('/postulant', [PersonController::class, 'registered']);
+Route::post('/postulant', [PersonController::class, 'registered'])->middleware('limit.ip.registrations');
 
 Route::get('/documents/commitment-letter/{personId}', [DocumentController::class, 'generateCommitmentLetter']);
 
