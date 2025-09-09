@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["...", "php81"]
+nixPkgs = ["php81", "nginx", "libmysqlclient", "composer", "nodejs_18", "npm-9_x"]
 
 [phases.install]
 cmds = ["composer install --no-dev --optimize-autoloader"]
