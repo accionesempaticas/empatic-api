@@ -220,3 +220,91 @@ Route::get('/populate-db', function () {
         ], 500);
     }
 });
+
+// Endpoint simple para crear usuarios básicos sin user_status
+Route::get('/populate-basic', function () {
+    try {
+        // Crear admin básico
+        $admin = \App\Models\Person::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'document_type' => 'CC',
+                'document_number' => '12345678',
+                'first_name' => 'Admin',
+                'last_name' => 'User',
+                'full_name' => 'Admin User',
+                'gender' => 'Masculino',
+                'phone_number' => '3001234567',
+                'date_of_birth' => '1990-01-01',
+                'age' => 34,
+                'nationality' => 'Colombiano',
+                'password' => \Illuminate\Support\Facades\Hash::make('admin123'),
+                'role' => 'admin',
+            ]
+        );
+        
+        // Crear 20 usuarios de prueba básicos
+        $testUsers = [
+            ['María García', 'maria.garcia@test.com'],
+            ['Carlos Rodríguez', 'carlos.rodriguez@test.com'],
+            ['Ana Martínez', 'ana.martinez@test.com'],
+            ['Luis Hernández', 'luis.hernandez@test.com'],
+            ['Sofia Ramírez', 'sofia.ramirez@test.com'],
+            ['Diego González', 'diego.gonzalez@test.com'],
+            ['Valentina López', 'valentina.lopez@test.com'],
+            ['Andrés Díaz', 'andres.diaz@test.com'],
+            ['Isabella Jiménez', 'isabella.jimenez@test.com'],
+            ['Santiago Moreno', 'santiago.moreno@test.com'],
+            ['Camila Herrera', 'camila.herrera@test.com'],
+            ['Mateo Castro', 'mateo.castro@test.com'],
+            ['Lucía Vega', 'lucia.vega@test.com'],
+            ['Sebastián Rojas', 'sebastian.rojas@test.com'],
+            ['Gabriela Sandoval', 'gabriela.sandoval@test.com'],
+            ['Felipe Aguilar', 'felipe.aguilar@test.com'],
+            ['Martina Paredes', 'martina.paredes@test.com'],
+            ['Nicolás Guerrero', 'nicolas.guerrero@test.com'],
+            ['Valeria Navarro', 'valeria.navarro@test.com'],
+            ['Emilio Campos', 'emilio.campos@test.com']
+        ];
+        
+        foreach ($testUsers as $userData) {
+            $names = explode(' ', $userData[0]);
+            $documentNumber = rand(10000000, 99999999);
+            
+            \App\Models\Person::firstOrCreate(
+                ['email' => $userData[1]],
+                [
+                    'document_type' => 'CC',
+                    'document_number' => (string)$documentNumber,
+                    'first_name' => $names[0],
+                    'last_name' => $names[1] ?? 'Apellido',
+                    'full_name' => $userData[0],
+                    'gender' => 'Otro',
+                    'phone_number' => '300' . rand(1000000, 9999999),
+                    'date_of_birth' => '1995-01-01',
+                    'age' => 29,
+                    'nationality' => 'Colombiano',
+                    'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                    'role' => 'applicant',
+                ]
+            );
+        }
+        
+        $peopleCount = \App\Models\Person::count();
+        
+        return response()->json([
+            'message' => 'Usuarios básicos creados exitosamente',
+            'count' => $peopleCount,
+            'admin_credentials' => [
+                'email' => 'admin@example.com',
+                'password' => 'admin123'
+            ]
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Error al crear usuarios básicos',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
