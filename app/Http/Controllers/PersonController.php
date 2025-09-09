@@ -280,38 +280,64 @@ class PersonController extends Controller
         $personData['experience_id'] = $experience->id;
         $personData['role'] = 'user';
         $personData['user_status'] = 'PENDIENTE'; // Estado inicial para nuevos registros
+        
+        // Ensure area and group are included
+        $personData['area'] = $request->get('area', 'Sin área');
+        $personData['group'] = $request->get('group', 'Sin grupo');
 
-        $person = Person::create($personData);
+        \Log::info('POST /postulant - Person data antes de crear:', ['data' => $personData]);
 
-        // Handle CV file
-        $cvFile = $request->file('cv_file');
-        $cvFilename = 'cv_' . Str::uuid() . '.' . $cvFile->getClientOriginalExtension();
-        $cvPath = $cvFile->storeAs("privates/{$person->id}", $cvFilename);
-        $person->cv_path = $cvPath;
+        try {
+            $person = Person::create($personData);
+            \Log::info('POST /postulant - Persona creada exitosamente:', ['id' => $person->id]);
+        } catch (\Exception $e) {
+            \Log::error('POST /postulant - Error al crear persona:', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'error' => 'Error al crear persona',
+                'message' => $e->getMessage()
+            ], 500);
+        }
 
-        // Handle informal photo
-        $piFile = $request->file('pi_file');
-        $piFilename = 'photo_informal_' . Str::uuid() . '.' . $piFile->getClientOriginalExtension();
-        $piPath = $piFile->storeAs("privates/{$person->id}", $piFilename);
-        $person->photo_informal_path = $piPath;
+        // Handle file uploads with error handling
+        try {
+            // Handle CV file
+            $cvFile = $request->file('cv_file');
+            $cvFilename = 'cv_' . Str::uuid() . '.' . $cvFile->getClientOriginalExtension();
+            $cvPath = $cvFile->storeAs("privates/{$person->id}", $cvFilename);
+            $person->cv_path = $cvPath;
 
-        // Handle formal photo
-        $pfFile = $request->file('pf_file');
-        $pfFilename = 'photo_formal_' . Str::uuid() . '.' . $pfFile->getClientOriginalExtension();
-        $pfPath = $pfFile->storeAs("privates/{$person->id}", $pfFilename);
-        $person->photo_formal_path = $pfPath;
+            // Handle informal photo
+            $piFile = $request->file('pi_file');
+            $piFilename = 'photo_informal_' . Str::uuid() . '.' . $piFile->getClientOriginalExtension();
+            $piPath = $piFile->storeAs("privates/{$person->id}", $piFilename);
+            $person->photo_informal_path = $piPath;
 
-        // Handle DNI file
-        $dniFile = $request->file('dni_file');
-        $dniFilename = 'dni_' . Str::uuid() . '.' . $dniFile->getClientOriginalExtension();
-        $dniPath = $dniFile->storeAs("privates/{$person->id}", $dniFilename);
-        $person->dni_scan_path = $dniPath;
+            // Handle formal photo
+            $pfFile = $request->file('pf_file');
+            $pfFilename = 'photo_formal_' . Str::uuid() . '.' . $pfFile->getClientOriginalExtension();
+            $pfPath = $pfFile->storeAs("privates/{$person->id}", $pfFilename);
+            $person->photo_formal_path = $pfPath;
 
-        // Handle CUL file
-        $culFile = $request->file('cul_file');
-        $culFilename = 'cul_' . Str::uuid() . '.' . $culFile->getClientOriginalExtension();
-        $culPath = $culFile->storeAs("privates/{$person->id}", $culFilename);
-        $person->lab_cert_path = $culPath;
+            // Handle DNI file
+            $dniFile = $request->file('dni_file');
+            $dniFilename = 'dni_' . Str::uuid() . '.' . $dniFile->getClientOriginalExtension();
+            $dniPath = $dniFile->storeAs("privates/{$person->id}", $dniFilename);
+            $person->dni_scan_path = $dniPath;
+
+            // Handle CUL file
+            $culFile = $request->file('cul_file');
+            $culFilename = 'cul_' . Str::uuid() . '.' . $culFile->getClientOriginalExtension();
+            $culPath = $culFile->storeAs("privates/{$person->id}", $culFilename);
+            $person->lab_cert_path = $culPath;
+            
+            \Log::info('POST /postulant - Archivos procesados correctamente');
+        } catch (\Exception $e) {
+            \Log::error('POST /postulant - Error procesando archivos:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'error' => 'Error procesando archivos',
+                'message' => $e->getMessage()
+            ], 500);
+        }
 
         $person->save();
 
