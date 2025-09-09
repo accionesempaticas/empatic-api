@@ -341,3 +341,40 @@ Route::get('/fix-user-status', function () {
         ], 500);
     }
 });
+
+// Endpoint para arreglar las columnas area y group
+Route::get('/fix-area-group', function () {
+    try {
+        $hasArea = \Illuminate\Support\Facades\Schema::hasColumn('people', 'area');
+        $hasGroup = \Illuminate\Support\Facades\Schema::hasColumn('people', 'group');
+        
+        $fixed = [];
+        
+        if (!$hasArea) {
+            \Illuminate\Support\Facades\Schema::table('people', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->string('area')->nullable()->after('role');
+            });
+            $fixed[] = 'area';
+        }
+        
+        if (!$hasGroup) {
+            \Illuminate\Support\Facades\Schema::table('people', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->string('group')->nullable()->after('area');
+            });
+            $fixed[] = 'group';
+        }
+        
+        return response()->json([
+            'message' => 'Columns checked and fixed',
+            'area_exists' => $hasArea,
+            'group_exists' => $hasGroup,
+            'fixed' => $fixed
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Error al verificar/agregar columnas area y group',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
