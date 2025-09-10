@@ -23,14 +23,14 @@ Route::get('/check-document-status/{userId}', [\App\Http\Controllers\DocumentSig
 
 Route::options('/documents/commitment-letter/{personId}', function () {
     return response('', 200)
-        ->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+        ->header('Access-Control-Allow-Origin', env('FRONTEND_URL', 'http://localhost:3001'))
         ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 });
 
 Route::options('/sign-document', function () {
     return response('', 200)
-        ->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+        ->header('Access-Control-Allow-Origin', env('FRONTEND_URL', 'http://localhost:3001'))
         ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 });

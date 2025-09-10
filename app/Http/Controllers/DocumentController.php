@@ -98,7 +98,7 @@ class DocumentController extends Controller
         
         return response($html)
             ->header('Content-Type', 'text/html; charset=utf-8')
-            ->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+            ->header('Access-Control-Allow-Origin', env('FRONTEND_URL', 'http://localhost:3001'))
             ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
             ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     }
