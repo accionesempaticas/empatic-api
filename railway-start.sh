@@ -1,21 +1,11 @@
 #!/bin/bash
+set -e
 
-# Railway startup script
-echo "🚀 Starting Railway deployment with SQLite..."
+# Create .env from example if it doesn't exist
+if [ ! -f .env ]; then
+    echo "Creating .env from .env.example..."
+    cp .env.example .env
+fi
 
-# Create SQLite database file if it doesn't exist
-echo "📁 Ensuring SQLite database exists..."
-rm -f database/database.sqlite
-touch database/database.sqlite
-
-# Fresh migrations (drop all tables and recreate)
-echo "📋 Running fresh migrations..."
-php artisan migrate:fresh --force
-
-# Run all seeders
-echo "🌱 Running all seeders..."
-php artisan db:seed --force
-
-# Start the server
-echo "🌐 Starting web server..."
+# Start the Laravel server
 php artisan serve --host=0.0.0.0 --port=$PORT
