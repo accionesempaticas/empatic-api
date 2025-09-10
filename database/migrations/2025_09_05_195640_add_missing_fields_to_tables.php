@@ -19,8 +19,14 @@ return new class extends Migration
 
         // Add missing fields to people table
         Schema::table('people', function (Blueprint $table) {
-            $table->string('area')->nullable();
-            $table->string('group')->nullable();
+            // Note: area and group columns are already added by 2025_09_04_191657_add_area_and_group_to_people_table.php
+            // Only add if they don't exist
+            if (!Schema::hasColumn('people', 'area')) {
+                $table->string('area')->nullable();
+            }
+            if (!Schema::hasColumn('people', 'group')) {
+                $table->string('group')->nullable();
+            }
         });
     }
 
@@ -34,7 +40,13 @@ return new class extends Migration
         });
 
         Schema::table('people', function (Blueprint $table) {
-            $table->dropColumn(['area', 'group']);
+            // Only drop if columns exist
+            if (Schema::hasColumn('people', 'area')) {
+                $table->dropColumn('area');
+            }
+            if (Schema::hasColumn('people', 'group')) {
+                $table->dropColumn('group');
+            }
         });
     }
 };
