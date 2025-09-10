@@ -142,6 +142,14 @@ class PersonController extends Controller
             'area' => 'sometimes|string|max:100',
             'group' => 'sometimes|string|max:100',
             'user_status' => 'sometimes|string|in:ACTIVO,INACTIVO,PENDIENTE,RETIRADO,BL',
+            // Handle relationships data
+            'location' => 'sometimes|array',
+            'location.region' => 'nullable|string|max:100',
+            'formation' => 'sometimes|array',
+            'formation.career' => 'nullable|string|max:100',
+            'experience' => 'sometimes|array',
+            'experience.experience_time' => 'nullable|string|max:100',
+            'experience.other_volunteer_work' => 'nullable|boolean',
         ]);
 
         // Si se envían first_name y last_name, generar full_name
@@ -154,9 +162,41 @@ class PersonController extends Controller
             $validated['password'] = Hash::make($validated['password']);
         }
 
-        $person->update($validated);
+        // Handle location relationship
+        if (isset($validated['location']) && isset($validated['location']['region'])) {
+            $location = Location::firstOrCreate(['region' => $validated['location']['region']]);
+            $person->location_id = $location->id;
+        }
 
-        return response()->json($person->fresh());
+        // Handle formation relationship
+        if (isset($validated['formation']) && isset($validated['formation']['career'])) {
+            $formation = AcademicFormation::firstOrCreate([
+                'career' => $validated['formation']['career'],
+                'academic_degree' => 'Pregrado', // Default value
+                'formation_center' => 'Sin especificar' // Default value
+            ]);
+            $person->formation_id = $formation->id;
+        }
+
+        // Handle experience relationship
+        if (isset($validated['experience'])) {
+            $experienceData = $validated['experience'];
+            if (isset($experienceData['experience_time'])) {
+                $experience = Experience::firstOrCreate([
+                    'experience_time' => $experienceData['experience_time'],
+                    'other_volunteer_work' => $experienceData['other_volunteer_work'] ?? false
+                ]);
+                $person->experience_id = $experience->id;
+            }
+        }
+
+        // Remove relationship data from validated array before updating person
+        unset($validated['location'], $validated['formation'], $validated['experience']);
+
+        $person->update($validated);
+        $person->save(); // Save the relationship IDs
+
+        return response()->json($person->fresh()->load('location', 'formation', 'experience'));
     }
 
     public function destroy($id)
