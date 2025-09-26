@@ -7,7 +7,7 @@ use App\Models\Person;
 use App\Models\SignedDocument;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use setasign\Fpdi\Fpdi;
+use PDF;
 
 class DocumentSignController extends Controller
 {
@@ -40,7 +40,6 @@ class DocumentSignController extends Controller
             $userId = $request->user_id;
             \Log::info('User ID recibido:', ['user_id' => $userId]);
             
-            // Obtener datos de la persona desde la base de datos igual que DocumentController
             $person = \App\Models\Person::with(['location', 'formation', 'experience'])->find($userId);
             
             if (!$person) {
@@ -55,7 +54,6 @@ class DocumentSignController extends Controller
             
             \Log::info('DocumentSignController - Datos de la persona:', $person->toArray());
             
-            // Si el usuario no tiene los campos necesarios, buscar el usuario más reciente con rol 'user'
             if (!$person->first_name || !$person->last_name || !$person->area) {
                 \Log::info('DocumentSignController - Usuario incompleto, buscando usuario más reciente...');
                 $recentPerson = \App\Models\Person::with(['location', 'formation', 'experience'])
@@ -85,7 +83,6 @@ class DocumentSignController extends Controller
 
         try {
             \Log::info('=== PASO 3: Crear directorio ===');
-            // Crear directorio para documentos firmados
             $userDir = 'privates/' . $person->id;
             \Log::info('Creando directorio:', ['dir' => $userDir]);
             \Storage::makeDirectory($userDir);
@@ -103,12 +100,10 @@ class DocumentSignController extends Controller
 
         try {
             \Log::info('=== PASO 4: Generar contenido ===');
-            // Generar nombre de archivo único
-            $filename = 'commitment_letter_signed_' . $person->id . '_' . time() . '.html';
+            $filename = 'commitment_letter_signed_' . $person->id . '_' . time() . '.pdf'; // Change extension to .pdf
             $filePath = $userDir . '/' . $filename;
             \Log::info('Archivo a crear:', ['path' => $filePath]);
             
-            // Crear contenido del documento firmado usando la misma lógica del DocumentController
             \Log::info('Generando contenido HTML...');
             $documentContent = $this->generateSignedDocumentHTML($person, $request->signature);
             \Log::info('✅ Contenido HTML generado, longitud:', ['length' => strlen($documentContent)]);
@@ -124,17 +119,17 @@ class DocumentSignController extends Controller
         }
 
         try {
-            \Log::info('=== PASO 5: Guardar archivo ===');
-            // Guardar archivo
-            \Log::info('Guardando archivo en storage...');
-            \Storage::put($filePath, $documentContent);
-            \Log::info('✅ Archivo guardado exitosamente');
+            \Log::info('=== PASO 5: Guardar archivo PDF ===');
+            \Log::info('Guardando archivo PDF en storage...');
+            $pdf = \PDF::loadHTML($documentContent);
+            \Storage::put($filePath, $pdf->output());
+            \Log::info('✅ Archivo PDF guardado exitosamente');
             
         } catch (\Exception $e) {
-            \Log::error('❌ Error guardando archivo:', ['error' => $e->getMessage()]);
+            \Log::error('❌ Error guardando archivo PDF:', ['error' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Error al guardar archivo: ' . $e->getMessage()
+                'message' => 'Error al guardar archivo PDF: ' . $e->getMessage()
             ], 500)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
                     ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -142,8 +137,6 @@ class DocumentSignController extends Controller
 
         try {
             \Log::info('=== PASO 6: Crear registro en BD ===');
-            // Crear registro en base de datos
-            \Log::info('Creando registro en signed_documents...');
             $signedDocument = SignedDocument::create([
                 'person_id' => $person->id,
                 'document_type' => $request->document_type ?? 'commitment_letter',
@@ -165,14 +158,12 @@ class DocumentSignController extends Controller
 
         try {
             \Log::info('=== PASO 7: Actualizar registro de persona ===');
-            // Actualizar el campo commitment_letter_path en la tabla people
             $person->commitment_letter_path = $filePath;
             $person->save();
             \Log::info('✅ Campo commitment_letter_path actualizado en people table');
             
         } catch (\Exception $e) {
             \Log::error('❌ Error actualizando people table:', ['error' => $e->getMessage()]);
-            // No fallar por este error, continuar con la respuesta
         }
 
         try {
@@ -279,6 +270,11 @@ class DocumentSignController extends Controller
                 'role_text' => 'para el programa Líderes Que Impactan, dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => null
             ],
+            'A7. Aliados Empáticos' => [
+                'period' => '2025, de septiembre a noviembre',
+                'role_text' => 'para el programa de Aliados Empáticos, dentro de la organización Acciones Empáticas.',
+                'placeholder_field' => null
+            ],
         ];
 
         return $templates[$area] ?? $templates['A1. Coordinación Nacional'];
@@ -329,43 +325,43 @@ class DocumentSignController extends Controller
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 11px;
-            line-height: 1.4;
-            margin: 20px;
+            font-size: 10px;
+            line-height: 1.7;
+            margin: 10px;
             color: #000;
         }
         .header {
             background-color: #40B5A8;
             color: white;
-            padding: 15px;
+            padding: 10px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .header h1 {
-            font-size: 18px;
+            font-size: 16px;
             margin: 0;
             font-weight: bold;
         }
         .title {
             text-align: center;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            margin: 20px 0;
+            margin: 15px 0;
             text-decoration: underline;
         }
         .content {
             text-align: justify;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         ul {
-            margin: 10px 0;
-            padding-left: 20px;
+            margin: 5px 0;
+            padding-left: 15px;
         }
         li {
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
         .signature-section {
-            margin-top: 40px;
+            margin-top: 20px;
         }
         .signature-line {
             border-bottom: 1px solid #000;

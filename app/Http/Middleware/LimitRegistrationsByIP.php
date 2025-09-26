@@ -12,7 +12,7 @@ class LimitRegistrationsByIP
     {
         $ip = $request->ip();
         $cacheKey = 'registration_count_' . $ip;
-        $maxRegistrations = 10;
+        $maxRegistrations = 30;
         $ttl = 60 * 60 * 24; // 24 horas en segundos
 
         // Obtener contador actual de la IP

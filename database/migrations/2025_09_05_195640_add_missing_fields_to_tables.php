@@ -17,11 +17,6 @@ return new class extends Migration
             $table->string('district')->nullable();
         });
 
-        // Add missing fields to people table
-        Schema::table('people', function (Blueprint $table) {
-            $table->string('area')->nullable();
-            $table->string('group')->nullable();
-        });
     }
 
     /**
@@ -33,8 +28,5 @@ return new class extends Migration
             $table->dropColumn(['country', 'district']);
         });
 
-        Schema::table('people', function (Blueprint $table) {
-            $table->dropColumn(['area', 'group']);
-        });
     }
 };

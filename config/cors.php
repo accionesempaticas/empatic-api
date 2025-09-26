@@ -26,7 +26,9 @@ return [
         'http://127.0.0.1:3000', 
         'http://127.0.0.1:3001', 
         'http://127.0.0.1:3002',
-        'https://empathic-actions-portal-k8tygr60r-accionesempaticas-projects.vercel.app'
+        'http://192.168.18.7:3001',
+        'https://empathic-actions-portal-k8tygr60r-accionesempaticas-projects.vercel.app',
+        'https://empathic-actions-portal.vercel.app'
     ],
 
     'allowed_origins_patterns' => [
