@@ -9,6 +9,10 @@ rm -f database/database.sqlite
 touch database/database.sqlite
 chmod 666 database/database.sqlite
 
+# Clear config cache
+echo "🧹 Clearing config cache..."
+php artisan config:clear
+
 # Fresh migrations (drop all tables and recreate)
 echo "📋 Running fresh migrations..."
 php artisan migrate --force
