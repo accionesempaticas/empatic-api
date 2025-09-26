@@ -11,7 +11,7 @@ chmod 666 database/database.sqlite
 
 # Fresh migrations (drop all tables and recreate)
 echo "📋 Running fresh migrations..."
-php artisan migrate:fresh --force
+php artisan migrate --force
 
 # Run document templates seeder only (avoid conflicts)
 echo "🌱 Running document templates seeder..."
@@ -24,6 +24,12 @@ SERVER_PID=$!
 
 # Wait a moment for server to start
 sleep 5
+
+# Create admin user
+echo "👤 Creating admin user..."
+curl -X POST http://localhost:$PORT/api/create-admin \
+     -H "Content-Type: application/json" \
+     -d '{"email": "admin@empathicactions.com", "password": "admin123"}' || echo "⚠️ Admin user creation failed, continuing..."
 
 # Populate database using endpoint
 echo "📊 Populating database with test data..."
