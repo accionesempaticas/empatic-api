@@ -8,6 +8,10 @@ echo "📁 Ensuring SQLite database exists..."
 rm -f database/database.sqlite
 touch database/database.sqlite
 
+# Set permissions for storage and cache
+echo "🔒 Setting permissions for storage and cache..."
+chmod -R 775 storage bootstrap/cache
+
 # Fresh migrations (drop all tables and recreate)
 echo "📋 Running fresh migrations..."
 php artisan migrate:fresh --force
