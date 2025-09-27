@@ -15,13 +15,15 @@ Route::get('/storage/privates/{userId}/{filename}', function ($userId, $filename
     }
     
     $file = Storage::get($filePath);
-    $mimeType = Storage::mimeType($filePath);
+    // CAMBIO: Detectar automáticamente el tipo MIME
+    $mimeType = Storage::mimeType($filePath) ?: 'application/pdf';
     
     return response($file, 200)
         ->header('Content-Type', $mimeType)
         ->header('Access-Control-Allow-Origin', 'http://localhost:3001')
         ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        ->header('Content-Disposition', 'inline; filename="' . $filename . '"'); // Para mostrar en navegador
 })->name('private.files');
 
 // Endpoint para verificar estado de la base de datos

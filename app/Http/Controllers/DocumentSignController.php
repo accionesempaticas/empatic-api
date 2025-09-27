@@ -7,7 +7,7 @@ use App\Models\Person;
 use App\Models\SignedDocument;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use setasign\Fpdi\Fpdi;
+use PDF;
 
 class DocumentSignController extends Controller
 {
@@ -15,7 +15,6 @@ class DocumentSignController extends Controller
     {
         \Log::info('=== INICIO DocumentSignController ===');
         \Log::info('DocumentSignController - Datos recibidos:', $request->all());
-        \Log::info('DocumentSignController - Archivos recibidos:', $request->allFiles());
         
         try {
             \Log::info('=== PASO 1: Validación ===');
@@ -40,7 +39,6 @@ class DocumentSignController extends Controller
             $userId = $request->user_id;
             \Log::info('User ID recibido:', ['user_id' => $userId]);
             
-            // Obtener datos de la persona desde la base de datos igual que DocumentController
             $person = \App\Models\Person::with(['location', 'formation', 'experience'])->find($userId);
             
             if (!$person) {
@@ -55,7 +53,6 @@ class DocumentSignController extends Controller
             
             \Log::info('DocumentSignController - Datos de la persona:', $person->toArray());
             
-            // Si el usuario no tiene los campos necesarios, buscar el usuario más reciente con rol 'user'
             if (!$person->first_name || !$person->last_name || !$person->area) {
                 \Log::info('DocumentSignController - Usuario incompleto, buscando usuario más reciente...');
                 $recentPerson = \App\Models\Person::with(['location', 'formation', 'experience'])
@@ -85,7 +82,6 @@ class DocumentSignController extends Controller
 
         try {
             \Log::info('=== PASO 3: Crear directorio ===');
-            // Crear directorio para documentos firmados
             $userDir = 'privates/' . $person->id;
             \Log::info('Creando directorio:', ['dir' => $userDir]);
             \Storage::makeDirectory($userDir);
@@ -102,39 +98,56 @@ class DocumentSignController extends Controller
         }
 
         try {
-            \Log::info('=== PASO 4: Generar contenido ===');
-            // Generar nombre de archivo único
-            $filename = 'commitment_letter_signed_' . $person->id . '_' . time() . '.html';
+            \Log::info('=== PASO 4: Generar PDF ===');
+            // CAMBIO: Ahora es .pdf en lugar de .html
+            $filename = 'commitment_letter_signed_' . $person->id . '_' . time() . '.pdf';
             $filePath = $userDir . '/' . $filename;
-            \Log::info('Archivo a crear:', ['path' => $filePath]);
+            \Log::info('Archivo PDF a crear:', ['path' => $filePath]);
             
-            // Crear contenido del documento firmado usando la misma lógica del DocumentController
-            \Log::info('Generando contenido HTML...');
-            $documentContent = $this->generateSignedDocumentHTML($person, $request->signature);
-            \Log::info('✅ Contenido HTML generado, longitud:', ['length' => strlen($documentContent)]);
+            // Generar HTML para el PDF
+            \Log::info('Generando contenido HTML para PDF...');
+            $htmlContent = $this->generateSignedDocumentHTML($person, $request->signature);
+            \Log::info('✅ Contenido HTML generado, longitud:', ['length' => strlen($htmlContent)]);
+            
+            // CAMBIO: Generar PDF usando la librería PDF
+            \Log::info('Convirtiendo HTML a PDF...');
+            $pdf = PDF::loadHTML($htmlContent);
+            
+            // Configurar opciones del PDF
+            $pdf->setPaper('A4', 'portrait');
+            $pdf->setOptions([
+                'isPhpEnabled' => true,
+                'isRemoteEnabled' => true,
+                'defaultFont' => 'sans-serif',
+                'dpi' => 150,
+                'defaultPaperSize' => 'A4',
+                'chroot' => storage_path(),
+            ]);
+            
+            \Log::info('✅ PDF generado correctamente');
             
         } catch (\Exception $e) {
-            \Log::error('❌ Error generando contenido:', ['error' => $e->getMessage()]);
+            \Log::error('❌ Error generando PDF:', ['error' => $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Error al generar contenido: ' . $e->getMessage()
+                'message' => 'Error al generar PDF: ' . $e->getMessage()
             ], 500)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
                     ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
 
         try {
-            \Log::info('=== PASO 5: Guardar archivo ===');
-            // Guardar archivo
-            \Log::info('Guardando archivo en storage...');
-            \Storage::put($filePath, $documentContent);
-            \Log::info('✅ Archivo guardado exitosamente');
+            \Log::info('=== PASO 5: Guardar archivo PDF ===');
+            // CAMBIO: Guardar el PDF binario generado
+            \Log::info('Guardando PDF en storage...');
+            \Storage::put($filePath, $pdf->output());
+            \Log::info('✅ Archivo PDF guardado exitosamente');
             
         } catch (\Exception $e) {
-            \Log::error('❌ Error guardando archivo:', ['error' => $e->getMessage()]);
+            \Log::error('❌ Error guardando archivo PDF:', ['error' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Error al guardar archivo: ' . $e->getMessage()
+                'message' => 'Error al guardar archivo PDF: ' . $e->getMessage()
             ], 500)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
                     ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -142,8 +155,6 @@ class DocumentSignController extends Controller
 
         try {
             \Log::info('=== PASO 6: Crear registro en BD ===');
-            // Crear registro en base de datos
-            \Log::info('Creando registro en signed_documents...');
             $signedDocument = SignedDocument::create([
                 'person_id' => $person->id,
                 'document_type' => $request->document_type ?? 'commitment_letter',
@@ -165,14 +176,12 @@ class DocumentSignController extends Controller
 
         try {
             \Log::info('=== PASO 7: Actualizar registro de persona ===');
-            // Actualizar el campo commitment_letter_path en la tabla people
             $person->commitment_letter_path = $filePath;
             $person->save();
             \Log::info('✅ Campo commitment_letter_path actualizado en people table');
             
         } catch (\Exception $e) {
             \Log::error('❌ Error actualizando people table:', ['error' => $e->getMessage()]);
-            // No fallar por este error, continuar con la respuesta
         }
 
         try {
@@ -183,10 +192,11 @@ class DocumentSignController extends Controller
             \Log::info('✅ PROCESO COMPLETADO EXITOSAMENTE');
             $response = [
                 'success' => true,
-                'message' => 'Documento firmado exitosamente',
+                'message' => 'Documento PDF firmado exitosamente',
                 'signed_document_id' => $signedDocument->id,
                 'person_name' => $person->first_name . ' ' . $person->last_name,
-                'signed_document_url' => $downloadUrl
+                'signed_document_url' => $downloadUrl,
+                'file_type' => 'PDF' // CAMBIO: Indicar que es PDF
             ];
             
             \Log::info('Respuesta a enviar:', $response);
@@ -207,39 +217,17 @@ class DocumentSignController extends Controller
         }
     }
     
-    private function createSignedPdf($person, $signatureImagePath)
-    {
-        // Crear el contenido del PDF con la firma
-        $html = $this->generateCommitmentLetterHTML($person, $signatureImagePath);
-        
-        // Guardar el HTML como documento firmado (simulando PDF)
-        $filename = 'commitment_letter_signed_' . $person->id . '_' . time() . '.html';
-        $filePath = 'privates/' . $person->id . '/' . $filename;
-        
-        // Asegurar que el directorio existe
-        Storage::makeDirectory('privates/' . $person->id);
-        
-        Storage::put($filePath, $html);
-        
-        return $filePath;
-    }
-    
     private function generateSignedDocumentHTML($person, $signatureBase64)
     {
-        // Usar datos reales de la base de datos igual que DocumentController
         $area = $person->area ?? 'A1. Coordinación Nacional';
         $template = $this->getTemplateContent($area);
         
-        // Generar el HTML base igual que el DocumentController
         $htmlContent = $this->generateHtmlFromPdfTemplate($person, $template);
         
-        // Agregar la firma al HTML
-        $signatureData = $signatureBase64;
-        
-        // Insertar la firma en el HTML en lugar del espacio de firma vacío
+        // Insertar la firma en el HTML
         $htmlContent = str_replace(
             '<span class="signature-line"></span>',
-            '<img src="' . $signatureData . '" style="max-width: 200px; max-height: 80px;" alt="Firma" />',
+            '<img src="' . $signatureBase64 . '" style="max-width: 200px; max-height: 80px; margin-top: 10px;" alt="Firma" />',
             $htmlContent
         );
         
@@ -291,7 +279,7 @@ class DocumentSignController extends Controller
         $fullName = trim($firstName . ' ' . $lastName);
         $documentType = $person->document_type ?? 'DNI';
         $documentNumber = $person->document_number ?? '00000000';
-        $province = $person->location?->province ?? 'Lima'; // Obtener provincia de la relación
+        $province = $person->location?->province ?? 'Lima';
         $currentDate = now()->format('d');
         $currentMonth = now()->locale('es')->format('F');
         
@@ -321,17 +309,24 @@ class DocumentSignController extends Controller
             );
         }
 
+        // CAMBIO: HTML optimizado para generar PDFs
         return '
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
+        @page {
+            margin: 1.5cm;
+            size: A4;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: DejaVu Sans, sans-serif;
             font-size: 11px;
             line-height: 1.4;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
             color: #000;
         }
         .header {
@@ -357,30 +352,29 @@ class DocumentSignController extends Controller
             text-align: justify;
             margin-bottom: 15px;
         }
+        .content p {
+            margin-bottom: 12px;
+        }
         ul {
             margin: 10px 0;
             padding-left: 20px;
         }
         li {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .signature-section {
-            margin-top: 40px;
+            margin-top: 30px;
+            page-break-inside: avoid;
         }
         .signature-line {
             border-bottom: 1px solid #000;
             width: 250px;
             display: inline-block;
             margin: 0 10px;
+            height: 20px;
         }
-        .date-line {
-            border-bottom: 1px solid #000;
-            width: 150px;
-            display: inline-block;
-        }
-        .footer {
-            margin-top: 30px;
-            text-align: left;
+        strong {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -435,7 +429,6 @@ class DocumentSignController extends Controller
     public function checkDocumentStatus($userId)
     {
         try {
-            // Buscar si el usuario ya tiene un documento firmado
             $signedDocument = SignedDocument::where('person_id', $userId)
                 ->where('document_type', 'commitment_letter')
                 ->first();
@@ -443,7 +436,8 @@ class DocumentSignController extends Controller
             $response = [
                 'user_id' => $userId,
                 'has_signed_document' => $signedDocument ? true : false,
-                'signed_at' => $signedDocument ? $signedDocument->signed_at : null
+                'signed_at' => $signedDocument ? $signedDocument->signed_at : null,
+                'file_type' => 'PDF' // CAMBIO: Indicar que es PDF
             ];
             
             return response()->json($response)
@@ -461,5 +455,4 @@ class DocumentSignController extends Controller
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
     }
-    
 }
