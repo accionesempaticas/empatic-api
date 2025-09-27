@@ -11,7 +11,6 @@ npm run build
 
 # Create SQLite database file if it doesn't exist
 echo "📁 Ensuring SQLite database exists..."
-rm -f database/database.sqlite
 touch database/database.sqlite
 
 # Set permissions for storage and cache
@@ -24,9 +23,9 @@ php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
-# Fresh migrations (drop all tables and recreate)
-echo "📋 Running fresh migrations..."
-php artisan migrate:fresh --force
+# Run migrations without deleting data
+echo "📋 Running migrations..."
+php artisan migrate --force
 
 # Seed the admin user
 echo "🌱 Seeding admin user..."
