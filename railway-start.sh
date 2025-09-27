@@ -18,6 +18,12 @@ touch database/database.sqlite
 echo "🔒 Setting permissions for storage and cache..."
 chmod -R 775 storage bootstrap/cache
 
+# Clear caches
+echo "🧹 Clearing caches..."
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
 # Fresh migrations (drop all tables and recreate)
 echo "📋 Running fresh migrations..."
 php artisan migrate:fresh --force
