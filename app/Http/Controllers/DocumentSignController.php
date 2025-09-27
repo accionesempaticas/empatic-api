@@ -54,20 +54,7 @@ class DocumentSignController extends Controller
             
             \Log::info('DocumentSignController - Datos de la persona:', $person->toArray());
             
-            if (!$person->first_name || !$person->last_name || !$person->area) {
-                \Log::info('DocumentSignController - Usuario incompleto, buscando usuario más reciente...');
-                $recentPerson = \App\Models\Person::with(['location', 'formation', 'experience'])
-                    ->where('role', 'user')
-                    ->whereNotNull('first_name')
-                    ->whereNotNull('area')
-                    ->orderBy('created_at', 'desc')
-                    ->first();
-                    
-                if ($recentPerson) {
-                    \Log::info('DocumentSignController - Usando usuario más reciente:', $recentPerson->toArray());
-                    $person = $recentPerson;
-                }
-            }
+            
             
             \Log::info('✅ Usuario encontrado:', ['id' => $person->id, 'name' => $person->first_name]);
             
