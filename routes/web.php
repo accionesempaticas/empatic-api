@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json(['status' => 'API is running']);
 });
 
 Route::get('/storage/privates/{userId}/{filename}', function ($userId, $filename) {
