@@ -3,6 +3,12 @@
 # Railway startup script
 echo "🚀 Starting Railway deployment with SQLite..."
 
+# Install frontend dependencies and build assets
+echo "📦 Installing frontend dependencies..."
+npm install
+echo "🎨 Building frontend assets..."
+npm run build
+
 # Create SQLite database file if it doesn't exist
 echo "📁 Ensuring SQLite database exists..."
 rm -f database/database.sqlite
