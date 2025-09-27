@@ -323,8 +323,8 @@ class DocumentSignController extends Controller
         }
         body {
             font-family: DejaVu Sans, sans-serif;
-            font-size: 11px;
-            line-height: 1.4;
+            font-size: 12px;
+            line-height: 1.6;
             margin: 0;
             padding: 0;
             color: #000;
@@ -337,13 +337,13 @@ class DocumentSignController extends Controller
             margin-bottom: 20px;
         }
         .header h1 {
-            font-size: 18px;
+            font-size: 20px;
             margin: 0;
             font-weight: bold;
         }
         .title {
             text-align: center;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             margin: 20px 0;
             text-decoration: underline;
