@@ -30,7 +30,7 @@ class DocumentSignController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error de validación: ' . json_encode($e->errors())
-            ], 422)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+            ], 422)->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app')
                     ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
@@ -47,7 +47,7 @@ class DocumentSignController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Usuario no encontrado'
-                ], 404)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+                ], 404)->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app')
                         ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                         ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
             }
@@ -76,7 +76,7 @@ class DocumentSignController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al buscar usuario: ' . $e->getMessage()
-            ], 500)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+            ], 500)->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app')
                     ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
@@ -93,7 +93,7 @@ class DocumentSignController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al crear directorio: ' . $e->getMessage()
-            ], 500)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+            ], 500)->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app')
                     ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
@@ -113,7 +113,7 @@ class DocumentSignController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al generar contenido: ' . $e->getMessage()
-            ], 500)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+            ], 500)->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app')
                     ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
@@ -130,7 +130,7 @@ class DocumentSignController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al guardar archivo PDF: ' . $e->getMessage()
-            ], 500)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+            ], 500)->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app')
                     ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
@@ -151,7 +151,7 @@ class DocumentSignController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al crear registro: ' . $e->getMessage()
-            ], 500)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+            ], 500)->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app')
                     ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
@@ -183,7 +183,7 @@ class DocumentSignController extends Controller
             \Log::info('Respuesta a enviar:', $response);
             
             return response()->json($response)
-                ->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+                ->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app')
                 ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                 ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
             
@@ -192,7 +192,7 @@ class DocumentSignController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error en respuesta: ' . $e->getMessage()
-            ], 500)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+            ], 500)->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app')
                     ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
@@ -443,7 +443,7 @@ class DocumentSignController extends Controller
             ];
             
             return response()->json($response)
-                ->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+                ->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app')
                 ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                 ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
                 
