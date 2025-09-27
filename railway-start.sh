@@ -12,9 +12,7 @@ touch database/database.sqlite
 echo "📋 Running fresh migrations..."
 php artisan migrate:fresh --force
 
-# Run all seeders
-echo "🌱 Running all seeders..."
-php artisan db:seed --force
+# Seeding with dev dependencies is disabled for production.
 
 # Start the server
 echo "🌐 Starting web server..."
