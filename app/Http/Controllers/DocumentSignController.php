@@ -155,7 +155,7 @@ class DocumentSignController extends Controller
 
         try {
             \Log::info('=== PASO 8: Preparar respuesta ===');
-            $downloadUrl = route('private.files', ['userId' => $person->id, 'filename' => $filename]);
+            $downloadUrl = url('storage/' . $filePath);
             \Log::info('URL de descarga:', ['url' => $downloadUrl]);
             
             \Log::info('✅ PROCESO COMPLETADO EXITOSAMENTE');
