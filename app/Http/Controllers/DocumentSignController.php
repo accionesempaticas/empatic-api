@@ -15,7 +15,6 @@ class DocumentSignController extends Controller
     {
         \Log::info('=== INICIO DocumentSignController ===');
         \Log::info('DocumentSignController - Datos recibidos:', $request->all());
-        \Log::info('DocumentSignController - Archivos recibidos:', $request->allFiles());
         
         try {
             \Log::info('=== PASO 1: Validación ===');
@@ -82,8 +81,9 @@ class DocumentSignController extends Controller
         }
 
         try {
-            \Log::info('=== PASO 3: Crear directorio ===');
-            $userDir = 'privates/' . $person->id;
+            \Log::info('=== PASO 3: Crear directorio público ===');
+            // CAMBIO: Usar directorio público en lugar de privado
+            $userDir = 'public/documents/' . $person->id;
             \Log::info('Creando directorio:', ['dir' => $userDir]);
             \Storage::makeDirectory($userDir);
             \Log::info('✅ Directorio creado');
@@ -100,7 +100,7 @@ class DocumentSignController extends Controller
 
         try {
             \Log::info('=== PASO 4: Generar contenido ===');
-            $filename = 'commitment_letter_signed_' . $person->id . '_' . time() . '.pdf'; // Change extension to .pdf
+            $filename = 'commitment_letter_signed_' . $person->id . '_' . time() . '.pdf';
             $filePath = $userDir . '/' . $filename;
             \Log::info('Archivo a crear:', ['path' => $filePath]);
             
@@ -168,7 +168,9 @@ class DocumentSignController extends Controller
 
         try {
             \Log::info('=== PASO 8: Preparar respuesta ===');
-            $downloadUrl = url('storage/' . $filePath);
+            // CAMBIO: Generar URL correcta para archivos públicos
+            $publicPath = str_replace('public/', '', $filePath);
+            $downloadUrl = url('storage/' . $publicPath);
             \Log::info('URL de descarga:', ['url' => $downloadUrl]);
             
             \Log::info('✅ PROCESO COMPLETADO EXITOSAMENTE');
@@ -197,22 +199,35 @@ class DocumentSignController extends Controller
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
     }
-    
-    private function createSignedPdf($person, $signatureImagePath)
+
+    // Alternativa: Método para servir archivos privados de manera controlada
+    public function downloadDocument($documentId)
     {
-        // Crear el contenido del PDF con la firma
-        $html = $this->generateCommitmentLetterHTML($person, $signatureImagePath);
-        
-        // Guardar el HTML como documento firmado (simulando PDF)
-        $filename = 'commitment_letter_signed_' . $person->id . '_' . time() . '.html';
-        $filePath = 'privates/' . $person->id . '/' . $filename;
-        
-        // Asegurar que el directorio existe
-        Storage::makeDirectory('privates/' . $person->id);
-        
-        Storage::put($filePath, $html);
-        
-        return $filePath;
+        try {
+            $signedDocument = SignedDocument::findOrFail($documentId);
+            
+            // Verificar permisos aquí si es necesario
+            // if (!$this->canUserAccessDocument(auth()->user(), $signedDocument)) {
+            //     abort(403);
+            // }
+            
+            if (!Storage::exists($signedDocument->file_path)) {
+                \Log::error('Archivo no encontrado:', ['path' => $signedDocument->file_path]);
+                abort(404, 'Archivo no encontrado');
+            }
+            
+            $fileContent = Storage::get($signedDocument->file_path);
+            $fileName = basename($signedDocument->file_path);
+            
+            return response($fileContent)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"')
+                ->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app');
+                
+        } catch (\Exception $e) {
+            \Log::error('Error downloading document:', ['error' => $e->getMessage()]);
+            abort(500, 'Error al descargar el documento');
+        }
     }
     
     private function generateSignedDocumentHTML($person, $signatureBase64)
@@ -287,7 +302,7 @@ class DocumentSignController extends Controller
         $fullName = trim($firstName . ' ' . $lastName);
         $documentType = $person->document_type ?? 'DNI';
         $documentNumber = $person->document_number ?? '00000000';
-        $province = $person->location?->province ?? 'Lima'; // Obtener provincia de la relación
+        $province = $person->location?->province ?? 'Lima';
         $currentDate = now()->format('d');
         $currentMonth = now()->locale('es')->format('F');
         
@@ -457,5 +472,4 @@ class DocumentSignController extends Controller
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
     }
-    
 }
