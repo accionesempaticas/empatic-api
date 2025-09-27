@@ -168,7 +168,7 @@ class DocumentSignController extends Controller
 
         try {
             \Log::info('=== PASO 8: Preparar respuesta ===');
-            $downloadUrl = route('private.files', ['userId' => $person->id, 'filename' => $filename]);
+            $downloadUrl = url('storage/' . $filePath);
             \Log::info('URL de descarga:', ['url' => $downloadUrl]);
             
             \Log::info('✅ PROCESO COMPLETADO EXITOSAMENTE');
@@ -452,7 +452,7 @@ class DocumentSignController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al verificar estado del documento: ' . $e->getMessage()
-            ], 500)->header('Access-Control-Allow-Origin', 'http://localhost:3001')
+            ], 500)->header('Access-Control-Allow-Origin', 'https://empathic-actions-portal.vercel.app')
                     ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
