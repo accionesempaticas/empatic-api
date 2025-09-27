@@ -22,7 +22,9 @@ chmod -R 775 storage bootstrap/cache
 echo "📋 Running fresh migrations..."
 php artisan migrate:fresh --force
 
-# Seeding with dev dependencies is disabled for production.
+# Seed the admin user
+echo "🌱 Seeding admin user..."
+php artisan db:seed --class=AdminUserSeeder --force
 
 # Start the server
 echo "🌐 Starting web server..."
