@@ -5,7 +5,13 @@ nixPkgs = ["php82", "nginx", "libmysqlclient", "phpPackages.composer", "nodejs_1
 cmds = ["composer install --no-dev --optimize-autoloader"]
 
 [phases.build]
-cmds = []
-
-[start]
-cmd = "./railway-start.sh"
+cmds = [
+    "echo '🚀 Starting build process...'",
+    "touch database/database.sqlite",
+    "chmod 666 database/database.sqlite",
+    "php artisan config:clear",
+    "echo '🔒 Setting permissions for storage and cache...'",
+    "chmod -R 775 storage bootstrap/cache",
+    "php artisan migrate --force",
+    "echo '✅ Build process complete.'"
+]
