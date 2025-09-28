@@ -79,7 +79,7 @@ class PersonController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'document_type' => 'required|in:DNI,CE',
+            'document_type' => 'required|in:DNI,CE,CC',
             'document_number' => [
                 'required',
                 'string',
@@ -91,6 +91,9 @@ class PersonController extends Controller
                     }
                     if ($type === 'CE' && (strlen($value) < 6 || strlen($value) > 20)) {
                         $fail('El Carnet de Extranjería debe tener entre 6 y 20 caracteres.');
+                    }
+                    if ($type === 'CC' && (!is_numeric($value) || strlen($value) < 5 || strlen($value) > 15)) {
+                        $fail('La CC debe tener entre 5 y 15 dígitos numéricos.');
                     }
                 },
             ],
@@ -195,7 +198,7 @@ class PersonController extends Controller
             'location.address' => 'required|string|max:255',
             'experience.experience_time' => 'required|string|max:100',
             'experience.other_volunteer_work' => 'required|string|max:255',
-            'document_type' => 'required|in:DNI,CE',
+            'document_type' => 'required|in:DNI,CE,CC',
             'document_number' => [
                 'required',
                 'string',
@@ -207,6 +210,9 @@ class PersonController extends Controller
                     }
                     if ($type === 'CE' && (strlen($value) < 6 || strlen($value) > 20)) {
                         $fail('El Carnet de Extranjería debe tener entre 6 y 20 caracteres.');
+                    }
+                    if ($type === 'CC' && (!is_numeric($value) || strlen($value) < 5 || strlen($value) > 15)) {
+                        $fail('La CC debe tener entre 5 y 15 dígitos numéricos.');
                     }
                 },
             ],

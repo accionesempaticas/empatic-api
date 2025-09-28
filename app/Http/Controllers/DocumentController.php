@@ -73,20 +73,10 @@ class DocumentController extends Controller
         
         \Log::info('DocumentController - Datos de la persona:', $person->toArray());
         
-        // Si el usuario no tiene los campos necesarios, buscar el usuario más reciente con rol 'user'
-        if (!$person->first_name || !$person->last_name || !$person->area) {
-            \Log::info('DocumentController - Usuario incompleto, buscando usuario más reciente...');
-            $recentPerson = \App\Models\Person::with(['location', 'formation', 'experience'])
-                ->where('role', 'user')
-                ->whereNotNull('first_name')
-                ->whereNotNull('area')
-                ->orderBy('created_at', 'desc')
-                ->first();
-                
-            if ($recentPerson) {
-                \Log::info('DocumentController - Usando usuario más reciente:', $recentPerson->toArray());
-                $person = $recentPerson;
-            }
+        // Validar que la persona tenga un área asignada
+        if (!$person->area) {
+            \Log::error('DocumentController - La persona no tiene un área asignada.', ['person_id' => $personId]);
+            return response('Error: La persona no tiene un área asignada. No se puede generar el documento.', 400);
         }
         
         // Usar datos reales de la base de datos en lugar de parámetros de URL
