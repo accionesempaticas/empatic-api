@@ -17,46 +17,51 @@ class DocumentController extends Controller
             'A4. Mentores Empáticos' => '6. CARTA DE COMPROMISO DEL VOLUNTARIO - Mentores Empáticos',
             'A5. Coordinación Regional' => '3. CARTA DE COMPROMISO DEL VOLUNTARIO - Coordinación Regional',
             'A6. Líderes Que Impactan' => '4. CARTA DE COMPROMISO DEL VOLUNTARIO - Líderes Que Impactan',
+            'A7. Aliados Empáticos' => '8. CARTA DE COMPROMISO DEL VOLUNTARIO - Aliados Empáticos',
         ];
     }
 
     private function getTemplateContent($area)
     {
         $templates = [
-            'Coordinación Nacional' => [
+            'A1. Coordinación Nacional' => [
                 'period' => '2025-II, de agosto a diciembre',
                 'role_text' => 'bajo el rol de la Coordinación Nacional del área de ______________________________ dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => 'area'
             ],
-            'SkillUp 360' => [
+            'A2. SkillUp 360' => [
                 'period' => '2025-II, de agosto a diciembre',
                 'role_text' => 'para el programa SkillUp 360°, dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => null
             ],
-            'Coordinación Programas' => [ // Nombre corregido para que coincida con el frontend
+            'A3. Coordinación de Proyectos' => [
                 'period' => '2025-II, de septiembre a noviembre',
                 'role_text' => 'bajo el rol de la Coordinación de Proyectos del proyecto _______________________ dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => 'project'
             ],
-            'Mentores Empáticos' => [
+            'A4. Mentores Empáticos' => [
                 'period' => '2025, de septiembre a noviembre',
                 'role_text' => 'para el programa Mentores Empáticos, dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => null
             ],
-            'Coordinación Regional' => [
+            'A5. Coordinación Regional' => [
                 'period' => '2025-II, de septiembre a diciembre',
                 'role_text' => 'bajo el rol de la Coordinación Regional de la región __________________________ dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => 'region'
             ],
-            'Líderes Que Impactan' => [
+            'A6. Líderes Que Impactan' => [
                 'period' => '2025-II, de septiembre a diciembre',
                 'role_text' => 'para el programa Líderes Que Impactan, dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => null
             ],
-            // NOTA: El área 'Aliados Empáticos' existe en el frontend pero no tiene una plantilla definida aquí.
+            'A7. Aliados Empáticos' => [
+                'period' => '2025, de septiembre a noviembre',
+                'role_text' => 'para el programa de Aliados Empáticos, dentro de la organización Acciones Empáticas.',
+                'placeholder_field' => null
+            ],
         ];
 
-        return $templates[$area] ?? $templates['Coordinación Nacional'];
+        return $templates[$area] ?? $templates['A1. Coordinación Nacional'];
     }
 
     public function generateCommitmentLetter(Request $request, $personId)
