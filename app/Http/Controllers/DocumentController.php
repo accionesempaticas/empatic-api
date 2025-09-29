@@ -165,7 +165,7 @@ class DocumentController extends Controller
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 11px;
+            font-size: 13px;
             line-height: 1.4;
             margin: 20px;
             color: #000;
@@ -173,18 +173,18 @@ class DocumentController extends Controller
         .header {
             background-color: #40B5A8;
             color: white;
-            padding: 15px;
+            padding: 17px;
             text-align: center;
             margin-bottom: 20px;
         }
         .header h1 {
-            font-size: 18px;
+            font-size: 20px;
             margin: 0;
             font-weight: bold;
         }
         .title {
             text-align: center;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             margin: 20px 0;
             text-decoration: underline;
