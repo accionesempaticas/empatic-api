@@ -225,7 +225,7 @@ class PersonController extends Controller
             'gender' => 'required|string|max:20',
             'family_phone_number' => 'nullable|string|max:15',
             'linkedin' => 'nullable|string|max:70',
-            'cv_file' => 'required|file|mimes:pdf|max:10240',
+            'cv_file' => 'required|file|mimes:pdf,doc,docx|max:10240',
             'pi_file' => 'required|image|mimes:jpg,jpeg,png|max:10240',
             'pf_file' => 'required|image|mimes:jpg,jpeg,png|max:10240',
             'dni_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
