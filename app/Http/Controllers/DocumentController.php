@@ -112,6 +112,10 @@ class DocumentController extends Controller
         $documentType = $person->document_type ?? 'DNI';
         $documentNumber = $person->document_number ?? '00000000';
         $province = $person->location?->province ?? 'Lima'; // Obtener provincia de la relación
+        
+        // Forzar localización a español para la fecha
+        app()->setLocale('es');
+        
         $currentDate = now()->format('d');
         
         // Array de meses en español
