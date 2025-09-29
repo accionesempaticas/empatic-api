@@ -23,39 +23,40 @@ class DocumentController extends Controller
     private function getTemplateContent($area)
     {
         $templates = [
-            'A1. Coordinación Nacional' => [
+            'Coordinación Nacional' => [
                 'period' => '2025-II, de agosto a diciembre',
                 'role_text' => 'bajo el rol de la Coordinación Nacional del área de ______________________________ dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => 'area'
             ],
-            'A2. SkillUp 360' => [
+            'SkillUp 360' => [
                 'period' => '2025-II, de agosto a diciembre',
                 'role_text' => 'para el programa SkillUp 360°, dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => null
             ],
-            'A3. Coordinación de Proyectos' => [
+            'Coordinación Programas' => [ // Nombre corregido para que coincida con el frontend
                 'period' => '2025-II, de septiembre a noviembre',
                 'role_text' => 'bajo el rol de la Coordinación de Proyectos del proyecto _______________________ dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => 'project'
             ],
-            'A4. Mentores Empáticos' => [
+            'Mentores Empáticos' => [
                 'period' => '2025, de septiembre a noviembre',
                 'role_text' => 'para el programa Mentores Empáticos, dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => null
             ],
-            'A5. Coordinación Regional' => [
+            'Coordinación Regional' => [
                 'period' => '2025-II, de septiembre a diciembre',
                 'role_text' => 'bajo el rol de la Coordinación Regional de la región __________________________ dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => 'region'
             ],
-            'A6. Líderes Que Impactan' => [
+            'Líderes Que Impactan' => [
                 'period' => '2025-II, de septiembre a diciembre',
                 'role_text' => 'para el programa Líderes Que Impactan, dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => null
             ],
+            // NOTA: El área 'Aliados Empáticos' existe en el frontend pero no tiene una plantilla definida aquí.
         ];
 
-        return $templates[$area] ?? $templates['A1. Coordinación Nacional'];
+        return $templates[$area] ?? $templates['Coordinación Nacional'];
     }
 
     public function generateCommitmentLetter(Request $request, $personId)
