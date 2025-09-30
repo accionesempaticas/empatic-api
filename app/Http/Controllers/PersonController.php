@@ -229,7 +229,7 @@ class PersonController extends Controller
             'pi_file' => 'required|image|mimes:jpg,jpeg,png|max:10240',
             'pf_file' => 'required|image|mimes:jpg,jpeg,png|max:10240',
             'dni_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
-            'cul_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'cul_file' => 'required|file|mimes:pdf|max:10240',
 
         ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
