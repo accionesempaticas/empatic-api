@@ -281,7 +281,14 @@ class DocumentSignController extends Controller
         $documentNumber = $person->document_number ?? '00000000';
         $province = $person->location?->province ?? 'Lima';
         $currentDate = now()->format('d');
-        $currentMonth = now()->locale('es')->format('F');
+
+        // Meses en español
+        $monthsSpanish = [
+            1 => 'enero', 2 => 'febrero', 3 => 'marzo', 4 => 'abril',
+            5 => 'mayo', 6 => 'junio', 7 => 'julio', 8 => 'agosto',
+            9 => 'septiembre', 10 => 'octubre', 11 => 'noviembre', 12 => 'diciembre'
+        ];
+        $currentMonth = $monthsSpanish[now()->format('n')];
         
         // Obtener el campo específico según el área
         $specificField = '';
@@ -291,7 +298,7 @@ class DocumentSignController extends Controller
                     $specificField = $person->group ?? '______________________________';
                     break;
                 case 'region':
-                    $specificField = $person->location?->region ?? '__________________________';
+                    $specificField = $person->group ?? '__________________________';
                     break;
                 case 'project':
                     $specificField = $person->project ?? '_______________________';
@@ -322,8 +329,8 @@ class DocumentSignController extends Controller
             size: A4;
         }
         body {
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 12px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
             line-height: 1.6;
             margin: 0;
             padding: 0;
