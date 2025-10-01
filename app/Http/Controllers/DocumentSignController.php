@@ -236,7 +236,11 @@ class DocumentSignController extends Controller
     
     private function getTemplateContent($area)
     {
+        \Log::info('=== DEBUG AREA ===');
+        \Log::info('Area recibida:', ['area' => $area]);
+
         $templates = [
+            // Con prefijos A1, A2, etc.
             'A1. Coordinación Nacional' => [
                 'period' => '2025-II, de agosto a diciembre',
                 'role_text' => 'bajo el rol de la Coordinación Nacional del área de ______________________________ dentro de la organización Acciones Empáticas.',
@@ -267,9 +271,49 @@ class DocumentSignController extends Controller
                 'role_text' => 'para el programa Líderes Que Impactan, dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => null
             ],
+
+            // Sin prefijos (para compatibilidad con frontend)
+            'Coordinación Nacional' => [
+                'period' => '2025-II, de agosto a diciembre',
+                'role_text' => 'bajo el rol de la Coordinación Nacional del área de ______________________________ dentro de la organización Acciones Empáticas.',
+                'placeholder_field' => 'area'
+            ],
+            'SkillUp 360' => [
+                'period' => '2025-II, de agosto a diciembre',
+                'role_text' => 'para el programa SkillUp 360°, dentro de la organización Acciones Empáticas.',
+                'placeholder_field' => null
+            ],
+            'Coordinación Programas' => [
+                'period' => '2025-II, de septiembre a noviembre',
+                'role_text' => 'bajo el rol de la Coordinación de Proyectos del proyecto _______________________ dentro de la organización Acciones Empáticas.',
+                'placeholder_field' => 'project'
+            ],
+            'Mentores Empáticos' => [
+                'period' => '2025, de septiembre a noviembre',
+                'role_text' => 'para el programa Mentores Empáticos, dentro de la organización Acciones Empáticas.',
+                'placeholder_field' => null
+            ],
+            'Coordinación Regional' => [
+                'period' => '2025-II, de septiembre a diciembre',
+                'role_text' => 'bajo el rol de la Coordinación Regional de la región __________________________ dentro de la organización Acciones Empáticas.',
+                'placeholder_field' => 'region'
+            ],
+            'Líderes Que Impactan' => [
+                'period' => '2025-II, de septiembre a diciembre',
+                'role_text' => 'para el programa Líderes Que Impactan, dentro de la organización Acciones Empáticas.',
+                'placeholder_field' => null
+            ],
+            'Aliados Empáticos' => [
+                'period' => '2025, de septiembre a noviembre',
+                'role_text' => 'para el programa de Aliados Empáticos, dentro de la organización Acciones Empáticas.',
+                'placeholder_field' => null
+            ],
         ];
 
-        return $templates[$area] ?? $templates['A1. Coordinación Nacional'];
+        $selectedTemplate = $templates[$area] ?? $templates['A1. Coordinación Nacional'];
+        \Log::info('Template seleccionado:', ['template' => $selectedTemplate]);
+
+        return $selectedTemplate;
     }
 
     private function generateHtmlFromPdfTemplate($person, $template)
@@ -293,6 +337,11 @@ class DocumentSignController extends Controller
         // Obtener el campo específico según el área
         $specificField = '';
         if ($template['placeholder_field']) {
+            \Log::info('=== DEBUG TEMPLATE ===');
+            \Log::info('Template placeholder_field:', ['field' => $template['placeholder_field']]);
+            \Log::info('Person group:', ['group' => $person->group]);
+            \Log::info('Person location region:', ['location_region' => $person->location?->region]);
+
             switch ($template['placeholder_field']) {
                 case 'area':
                     $specificField = $person->group ?? '______________________________';
@@ -304,6 +353,8 @@ class DocumentSignController extends Controller
                     $specificField = $person->project ?? '_______________________';
                     break;
             }
+
+            \Log::info('Specific field resultado:', ['specificField' => $specificField]);
         }
 
         // Reemplazar placeholders en role_text
