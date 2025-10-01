@@ -253,7 +253,7 @@ class DocumentSignController extends Controller
             ],
             'A3. Coordinación de Proyectos' => [
                 'period' => '2025-II, de septiembre a noviembre',
-                'role_text' => 'bajo el rol de la Coordinación de Proyectos del proyecto _______________________ dentro de la organización Acciones Empáticas.',
+                'role_text' => 'bajo el rol de la Coordinación de Proyectos para el proyecto _______________________ dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => 'project'
             ],
             'A4. Mentores Empáticos' => [
@@ -285,7 +285,7 @@ class DocumentSignController extends Controller
             ],
             'Coordinación Programas' => [
                 'period' => '2025-II, de septiembre a noviembre',
-                'role_text' => 'bajo el rol de la Coordinación de Proyectos del proyecto _______________________ dentro de la organización Acciones Empáticas.',
+                'role_text' => 'bajo el rol de la Coordinación de Proyectos para el proyecto _______________________ dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => 'project'
             ],
             'Mentores Empáticos' => [
