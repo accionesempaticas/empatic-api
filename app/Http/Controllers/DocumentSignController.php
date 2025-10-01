@@ -350,7 +350,7 @@ class DocumentSignController extends Controller
                     $specificField = $person->group ?? '__________________________';
                     break;
                 case 'project':
-                    $specificField = $person->project ?? '_______________________';
+                    $specificField = $person->group ?? '_______________________';
                     break;
             }
 
