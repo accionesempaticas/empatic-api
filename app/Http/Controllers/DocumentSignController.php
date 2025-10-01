@@ -376,7 +376,7 @@ class DocumentSignController extends Controller
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
         @page {
-            margin: 3cm;
+            margin: 2.5cm;
             size: A4;
         }
         body {
