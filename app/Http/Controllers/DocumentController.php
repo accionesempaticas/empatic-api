@@ -139,7 +139,7 @@ class DocumentController extends Controller
                     $specificField = $person->group ?? '______________________________';
                     break;
                 case 'region':
-                    $specificField = $person->location?->region ?? '__________________________';
+                    $specificField = $person->group ?? '__________________________';
                     break;
                 case 'project':
                     $specificField = $person->group ?? '_______________________';
