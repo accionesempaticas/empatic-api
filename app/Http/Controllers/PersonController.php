@@ -89,11 +89,11 @@ class PersonController extends Controller
                     if ($type === 'DNI' && !preg_match('/^\d{8}$/', $value)) {
                         $fail('El DNI debe tener exactamente 8 dígitos.');
                     }
-                    if ($type === 'CE' && (strlen($value) < 6 || strlen($value) > 20)) {
-                        $fail('El Carnet de Extranjería debe tener entre 6 y 20 caracteres.');
+                    if ($type === 'CE' && (!is_numeric($value) || strlen($value) < 5 || strlen($value) > 20)) {
+                        $fail('La Cédula de Extranjería debe tener entre 5 y 20 dígitos.');
                     }
-                    if ($type === 'CC' && (!is_numeric($value) || strlen($value) < 5 || strlen($value) > 15)) {
-                        $fail('La CC debe tener entre 5 y 15 dígitos numéricos.');
+                    if ($type === 'CC' && (!is_numeric($value) || strlen($value) < 5 || strlen($value) > 20)) {
+                        $fail('La Cédula de Ciudadanía debe tener entre 5 y 20 dígitos.');
                     }
                 },
             ],
@@ -208,11 +208,11 @@ class PersonController extends Controller
                     if ($type === 'DNI' && !preg_match('/^\d{8}$/', $value)) {
                         $fail('El DNI debe tener exactamente 8 dígitos.');
                     }
-                    if ($type === 'CE' && (strlen($value) < 6 || strlen($value) > 20)) {
-                        $fail('El Carnet de Extranjería debe tener entre 6 y 20 caracteres.');
+                    if ($type === 'CE' && (!is_numeric($value) || strlen($value) < 5 || strlen($value) > 20)) {
+                        $fail('La Cédula de Extranjería debe tener entre 5 y 20 dígitos.');
                     }
-                    if ($type === 'CC' && (!is_numeric($value) || strlen($value) < 5 || strlen($value) > 15)) {
-                        $fail('La CC debe tener entre 5 y 15 dígitos numéricos.');
+                    if ($type === 'CC' && (!is_numeric($value) || strlen($value) < 5 || strlen($value) > 20)) {
+                        $fail('La Cédula de Ciudadanía debe tener entre 5 y 20 dígitos.');
                     }
                 },
             ],
