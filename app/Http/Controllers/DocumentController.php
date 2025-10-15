@@ -34,13 +34,13 @@ class DocumentController extends Controller
                 'role_text' => 'para el programa SkillUp 360°, dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => null
             ],
-            'Coordinación Programas' => [ // Nombre corregido para que coincida con el frontend
-                'period' => '2025-II, de septiembre a noviembre',
+            'Coordinación Programas' => [ 
+                'period' => '2025-II, de septiembre a diciembre',
                 'role_text' => 'bajo el rol de la Coordinación de Proyectos para el proyecto _______________________ dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => 'project'
             ],
             'Mentores Empáticos' => [
-                'period' => '2025, de septiembre a noviembre',
+                'period' => '2025, de septiembre a diciembre',
                 'role_text' => 'para el programa Mentores Empáticos, dentro de la organización Acciones Empáticas.',
                 'placeholder_field' => null
             ],
