@@ -1,0 +1,22 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "./railway-start.sh"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+# Volume para persistir backups y base de datos
+[[volumes]]
+name = "database-volume"
+mountPath = "/app/database"
+
+[[volumes]]
+name = "backups-volume"
+mountPath = "/app/persistent-backups"
+
+# Variables de entorno para producción
+[env]
+APP_ENV = "production"
+APP_DEBUG = "false"
+APP_LOCALE = "es"
